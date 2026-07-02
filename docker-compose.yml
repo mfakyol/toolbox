@@ -1,0 +1,18 @@
+services:
+  server:
+    build: ./server
+    environment:
+      - PORT=6000
+      - CORS_ORIGIN=*
+      - MAX_FILE_SIZE=26214400
+    restart: unless-stopped
+    expose:
+      - "6000"
+
+  client:
+    build: ./client
+    depends_on:
+      - server
+    ports:
+      - "8080:80"
+    restart: unless-stopped

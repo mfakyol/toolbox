@@ -1,0 +1,21 @@
+import { useI18n } from "../i18n";
+import { LANGUAGES, LANGUAGE_LABELS, type Lang } from "../i18n/translations";
+
+export function LangSwitcher() {
+  const { lang, setLang } = useI18n();
+
+  return (
+    <select
+      className="lang-select"
+      value={lang}
+      onChange={(e) => setLang(e.target.value as Lang)}
+      aria-label="Language"
+    >
+      {LANGUAGES.map((l) => (
+        <option key={l} value={l}>
+          {LANGUAGE_LABELS[l]}
+        </option>
+      ))}
+    </select>
+  );
+}
