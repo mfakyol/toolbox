@@ -3,12 +3,29 @@ import * as secretApi from "../api/secret";
 import type { SecretSummary } from "../api/secret";
 import { CopyButton } from "../components/CopyButton";
 import { useI18n } from "../i18n";
+import {
+  Panel,
+  Field,
+  Button,
+  Badge,
+  Alert,
+  Checkbox,
+  PageIntro,
+  type BadgeTone,
+} from "../components/ui";
+import styles from "./SecretPage.module.scss";
 
 const TTL_KEYS: Record<number, string> = {
   3600: "secret.ttl1h",
   86400: "secret.ttl1d",
   604800: "secret.ttl7d",
   2592000: "secret.ttl30d",
+};
+
+const STATUS_TONE: Record<string, BadgeTone> = {
+  active: "accent",
+  viewed: "success",
+  expired: "neutral",
 };
 
 export default function SecretPage() {
@@ -68,53 +85,43 @@ export default function SecretPage() {
     setError(null);
   }
 
-  function statusLabel(s: SecretSummary) {
-    return t(`secret.${s.status}`);
-  }
-
   return (
     <div>
-      <p className="page-intro">{t("secret.intro")}</p>
+      <PageIntro>{t("secret.intro")}</PageIntro>
 
       {created ? (
-        <div className="panel secret-result">
+        <Panel className={styles.result}>
           <h3>{t("secret.linkTitle")}</h3>
-          <div className="secret-link-row">
+          <div className={styles.linkRow}>
             <input readOnly value={secretApi.secretUrl(created.token)} />
             <CopyButton text={secretApi.secretUrl(created.token)} />
           </div>
-          <p className="secret-warn">{t("secret.linkNote")}</p>
-          <div className="secret-badges">
-            {created.hasPassphrase && (
-              <span className="chip">{t("secret.protected")}</span>
-            )}
-            {created.requireLogin && (
-              <span className="chip">{t("secret.loginOnly")}</span>
-            )}
-            <span className="chip">
+          <p className={styles.warn}>{t("secret.linkNote")}</p>
+          <div className={styles.badges}>
+            {created.hasPassphrase && <Badge>{t("secret.protected")}</Badge>}
+            {created.requireLogin && <Badge>{t("secret.loginOnly")}</Badge>}
+            <Badge tone="accent">
               {t("secret.expires")}: {fmt(created.expiresAt)}
-            </span>
+            </Badge>
           </div>
-          <button className="convert-btn" onClick={reset}>
-            {t("secret.new")}
-          </button>
-        </div>
+          <div>
+            <Button onClick={reset}>{t("secret.new")}</Button>
+          </div>
+        </Panel>
       ) : (
-        <form className="panel secret-form" onSubmit={onSubmit}>
-          <label className="field">
-            <span>{t("secret.content")}</span>
+        <form className={styles.form} onSubmit={onSubmit}>
+          <Field label={t("secret.content")}>
             <textarea
-              className="secret-textarea"
+              className={styles.textarea}
               placeholder={t("secret.placeholder")}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
             />
-          </label>
+          </Field>
 
-          <div className="secret-form-row">
-            <label className="field">
-              <span>{t("secret.ttl")}</span>
+          <div className={styles.formRow}>
+            <Field label={t("secret.ttl")}>
               <select value={ttl} onChange={(e) => setTtl(Number(e.target.value))}>
                 {Object.entries(TTL_KEYS).map(([sec, key]) => (
                   <option key={sec} value={sec}>
@@ -122,43 +129,37 @@ export default function SecretPage() {
                   </option>
                 ))}
               </select>
-            </label>
-            <label className="field">
-              <span>{t("secret.passphrase")}</span>
+            </Field>
+            <Field label={t("secret.passphrase")}>
               <input
                 type="text"
                 placeholder={t("secret.passphrasePlaceholder")}
                 value={passphrase}
                 onChange={(e) => setPassphrase(e.target.value)}
               />
-            </label>
+            </Field>
           </div>
 
-          <label className="checkbox">
-            <input
-              type="checkbox"
-              checked={requireLogin}
-              onChange={(e) => setRequireLogin(e.target.checked)}
-            />
+          <Checkbox checked={requireLogin} onChange={setRequireLogin}>
             {t("secret.requireLogin")}
-          </label>
+          </Checkbox>
 
-          {error && <div className="error">{error}</div>}
+          {error && <Alert>{error}</Alert>}
 
-          <button className="convert-btn" type="submit" disabled={busy}>
+          <Button type="submit" disabled={busy}>
             {busy ? t("secret.creating") : t("secret.create")}
-          </button>
+          </Button>
         </form>
       )}
 
-      <div className="secret-history">
+      <div className={styles.history}>
         <h3>{t("secret.history")}</h3>
-        <p className="secret-history-note">{t("secret.historyNote")}</p>
+        <p className={styles.historyNote}>{t("secret.historyNote")}</p>
 
         {history.length === 0 ? (
-          <p className="empty">{t("secret.none")}</p>
+          <p className={styles.empty}>{t("secret.none")}</p>
         ) : (
-          <table className="admin-table">
+          <table className={styles.table}>
             <thead>
               <tr>
                 <th>{t("admin.statusCol")}</th>
@@ -172,11 +173,11 @@ export default function SecretPage() {
               {history.map((s) => (
                 <tr key={s.id}>
                   <td>
-                    <span className={`badge secret-status-${s.status}`}>
-                      {statusLabel(s)}
-                    </span>
-                    {s.hasPassphrase && <span className="muted"> 🔒</span>}
-                    {s.requireLogin && <span className="muted"> 👤</span>}
+                    <Badge tone={STATUS_TONE[s.status] ?? "neutral"}>
+                      {t(`secret.${s.status}`)}
+                    </Badge>
+                    {s.hasPassphrase && <span className={styles.muted}> 🔒</span>}
+                    {s.requireLogin && <span className={styles.muted}> 👤</span>}
                   </td>
                   <td>{fmt(s.createdAt)}</td>
                   <td>{fmt(s.expiresAt)}</td>

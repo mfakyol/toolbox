@@ -78,6 +78,26 @@
   }
 }
 
+@mixin data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+
+  th,
+  td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
 @mixin btn-ghost {
   @include btn-base;
   padding: 10px 16px;

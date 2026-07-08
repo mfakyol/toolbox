@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import * as secretApi from "../api/secret";
 import type { SecretMeta } from "../api/secret";
 import { CopyButton } from "../components/CopyButton";
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n";
+import { Panel, Field, Button, LinkButton, Alert, PageIntro } from "../components/ui";
+import styles from "./SecretViewPage.module.scss";
 
 export default function SecretViewPage() {
   const { token = "" } = useParams();
@@ -44,21 +46,21 @@ export default function SecretViewPage() {
 
   function Frame({ children }: { children: React.ReactNode }) {
     return (
-      <div className="secret-view-wrap">
-        <div className="panel secret-view-card">
-          <h2 className="auth-title">{t("secret.viewTitle")}</h2>
+      <div className={styles.wrap}>
+        <Panel className={styles.card}>
+          <h2 className={styles.title}>{t("secret.viewTitle")}</h2>
           {children}
-        </div>
+        </Panel>
       </div>
     );
   }
 
-  if (loading) return <Frame>{<p className="page-intro">…</p>}</Frame>;
+  if (loading) return <Frame>{<PageIntro>…</PageIntro>}</Frame>;
 
   if (loadError || !meta) {
     return (
       <Frame>
-        <div className="error">{loadError ?? t("secret.notFound")}</div>
+        <Alert>{loadError ?? t("secret.notFound")}</Alert>
       </Frame>
     );
   }
@@ -67,23 +69,23 @@ export default function SecretViewPage() {
   if (content !== null) {
     return (
       <Frame>
-        <p className="secret-revealed-label">{t("secret.revealed")}</p>
-        <div className="secret-content-box">
+        <p className={styles.revealedLabel}>{t("secret.revealed")}</p>
+        <div className={styles.contentBox}>
           <pre>{content}</pre>
         </div>
-        <div className="secret-badges">
+        <div className={styles.badges}>
           <CopyButton text={content} />
         </div>
-        <p className="secret-warn">{t("secret.afterView")}</p>
+        <p className={styles.warn}>{t("secret.afterView")}</p>
       </Frame>
     );
   }
 
   if (meta.status === "viewed") {
-    return <Frame>{<div className="error">{t("secret.gone")}</div>}</Frame>;
+    return <Frame>{<Alert>{t("secret.gone")}</Alert>}</Frame>;
   }
   if (meta.status === "expired") {
-    return <Frame>{<div className="error">{t("secret.expiredMsg")}</div>}</Frame>;
+    return <Frame>{<Alert>{t("secret.expiredMsg")}</Alert>}</Frame>;
   }
 
   // status === "active"
@@ -91,33 +93,32 @@ export default function SecretViewPage() {
 
   return (
     <Frame>
-      <p className="secret-warn">{t("secret.warnOnce")}</p>
+      <p className={styles.warn}>{t("secret.warnOnce")}</p>
 
       {needsLogin ? (
         <>
-          <div className="error">{t("secret.loginRequired")}</div>
-          <Link className="convert-btn secret-login-link" to="/login">
+          <Alert>{t("secret.loginRequired")}</Alert>
+          <LinkButton block href="/login">
             {t("secret.goLogin")}
-          </Link>
+          </LinkButton>
         </>
       ) : (
         <>
           {meta.hasPassphrase && (
-            <label className="field">
-              <span>{t("secret.enterPassphrase")}</span>
+            <Field label={t("secret.enterPassphrase")}>
               <input
                 type="password"
                 value={passphrase}
                 onChange={(e) => setPassphrase(e.target.value)}
               />
-            </label>
+            </Field>
           )}
 
-          {revealError && <div className="error">{revealError}</div>}
+          {revealError && <Alert>{revealError}</Alert>}
 
-          <button className="convert-btn" onClick={onReveal} disabled={revealing}>
+          <Button onClick={onReveal} disabled={revealing}>
             {revealing ? t("secret.revealing") : t("secret.reveal")}
-          </button>
+          </Button>
         </>
       )}
     </Frame>
