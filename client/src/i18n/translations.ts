@@ -38,7 +38,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     "qr.eccH": "H — En yüksek",
     "qr.eccHint":
       "Yüksek seviye, kod hasar görse veya üzerine logo eklense bile okunmasını sağlar; ama karekodu yoğunlaştırır.",
-    "qr.size": "Boyut",
+    "qr.size": "PNG boyutu",
     "qr.margin": "Kenar boşluğu",
     "qr.fg": "Ön plan rengi",
     "qr.bg": "Arka plan rengi",
@@ -314,7 +314,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     "qr.eccH": "H — Höchste",
     "qr.eccHint":
       "Höhere Stufen bleiben lesbar, wenn der Code beschädigt ist oder ein Logo einen Teil überdeckt — machen ihn aber dichter.",
-    "qr.size": "Größe",
+    "qr.size": "PNG-Größe",
     "qr.margin": "Rand",
     "qr.fg": "Vordergrundfarbe",
     "qr.bg": "Hintergrundfarbe",
@@ -589,7 +589,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     "qr.eccH": "H — High",
     "qr.eccHint":
       "Higher levels stay scannable even if the code is damaged or a logo covers part of it — but they make it denser.",
-    "qr.size": "Size",
+    "qr.size": "PNG size",
     "qr.margin": "Margin",
     "qr.fg": "Foreground color",
     "qr.bg": "Background color",

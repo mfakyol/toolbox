@@ -27,41 +27,57 @@ export default function QrPage() {
   const [svg, setSvg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Regenerate PNG + SVG whenever any option changes.
+  // Preview (SVG) — resolution-independent, so it does NOT depend on `size`.
+  // Moving the size slider only changes the exported PNG, not the preview.
   useEffect(() => {
     const value = text.trim();
     if (!value) {
-      setPngUrl(null);
       setSvg(null);
       setError(null);
       return;
     }
-
     let cancelled = false;
-    const opts = {
+    QRCode.toString(value, {
       errorCorrectionLevel: ecc,
       margin,
-      width: size,
       color: { dark: fg, light: bg },
-    };
-
-    Promise.all([
-      QRCode.toDataURL(value, opts),
-      QRCode.toString(value, { ...opts, type: "svg" }),
-    ])
-      .then(([dataUrl, svgStr]) => {
+      type: "svg",
+    })
+      .then((svgStr) => {
         if (cancelled) return;
-        setPngUrl(dataUrl);
         setSvg(svgStr);
         setError(null);
       })
       .catch((err) => {
         if (cancelled) return;
-        setPngUrl(null);
         setSvg(null);
         setError(err instanceof Error ? err.message : String(err));
       });
+    return () => {
+      cancelled = true;
+    };
+  }, [text, ecc, margin, fg, bg]);
 
+  // PNG export — the only thing `size` affects (output resolution).
+  useEffect(() => {
+    const value = text.trim();
+    if (!value) {
+      setPngUrl(null);
+      return;
+    }
+    let cancelled = false;
+    QRCode.toDataURL(value, {
+      errorCorrectionLevel: ecc,
+      margin,
+      width: size,
+      color: { dark: fg, light: bg },
+    })
+      .then((url) => {
+        if (!cancelled) setPngUrl(url);
+      })
+      .catch(() => {
+        if (!cancelled) setPngUrl(null);
+      });
     return () => {
       cancelled = true;
     };
@@ -159,15 +175,19 @@ export default function QrPage() {
         <div className="panel qr-result">
           {error ? (
             <p className="qr-error">{t("qr.tooLong")}</p>
-          ) : pngUrl ? (
+          ) : svg ? (
             <>
-              <div className="qr-preview" style={{ background: bg }}>
-                <img src={pngUrl} alt="QR" />
-              </div>
+              <div
+                className="qr-preview"
+                style={{ background: bg }}
+                dangerouslySetInnerHTML={{ __html: svg }}
+              />
               <div className="qr-downloads">
-                <a className="download-btn" href={pngUrl} download="qr.png">
-                  {t("qr.downloadPng")}
-                </a>
+                {pngUrl && (
+                  <a className="download-btn" href={pngUrl} download="qr.png">
+                    {t("qr.downloadPng")}
+                  </a>
+                )}
                 {svgUrl && (
                   <a className="download-btn" href={svgUrl} download="qr.svg">
                     {t("qr.downloadSvg")}

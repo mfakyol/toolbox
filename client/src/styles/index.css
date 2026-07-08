@@ -1645,10 +1645,27 @@ pre.code-area {
   }
 }
 
+.qr-textarea,
+.qr-layout select {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
 .qr-textarea {
   min-height: 90px;
   resize: vertical;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.qr-textarea:focus,
+.qr-layout select:focus {
+  outline: none;
+  border-color: var(--accent, #6366f1);
 }
 
 .qr-hint {
@@ -1680,12 +1697,11 @@ pre.code-area {
   line-height: 0;
 }
 
-.qr-preview img {
+.qr-preview svg {
   display: block;
-  width: 260px;
+  width: 240px;
   max-width: 100%;
   height: auto;
-  image-rendering: pixelated;
 }
 
 .qr-downloads {
