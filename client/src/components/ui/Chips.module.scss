@@ -1,0 +1,31 @@
+.grid {
+  display: grid;
+  gap: 8px;
+}
+
+.chip {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: border-color var(--dur) var(--ease),
+    background var(--dur) var(--ease);
+
+  &:hover {
+    border-color: var(--border-strong);
+  }
+}
+
+.active {
+  background: var(--gradient);
+  border-color: transparent;
+  color: #fff;
+
+  &:hover {
+    border-color: transparent;
+  }
+}

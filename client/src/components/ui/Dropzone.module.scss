@@ -1,0 +1,53 @@
+.zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
+
+  &:hover {
+    border-color: var(--border-strong);
+  }
+}
+
+.dragging {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.hasPreview {
+  padding: 8px;
+}
+
+.compact {
+  min-height: 150px;
+}
+
+.hint {
+  text-align: center;
+  color: var(--muted);
+  padding: 20px;
+
+  .icon {
+    font-size: 2.5rem;
+  }
+  .title {
+    color: var(--text);
+    font-weight: 600;
+    margin: 12px 0 4px;
+  }
+  .sub {
+    font-size: 0.8rem;
+  }
+}
+
+.preview {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+}

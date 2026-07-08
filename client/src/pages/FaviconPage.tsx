@@ -1,15 +1,25 @@
-import { useEffect, useRef, useState, type DragEvent } from "react";
+import { useEffect, useState } from "react";
 import { generateFavicons } from "../api/favicon";
 import { useI18n } from "../i18n";
+import {
+  Panel,
+  Columns,
+  Dropzone,
+  DropzoneHint,
+  DropzonePreview,
+  Field,
+  Button,
+  Alert,
+  PageIntro,
+} from "../components/ui";
+import styles from "./FaviconPage.module.scss";
 
 const PREVIEW_SIZES = [16, 32, 48, 64];
 
 export default function FaviconPage() {
   const { t } = useI18n();
-  const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [dragging, setDragging] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,12 +45,6 @@ export default function FaviconPage() {
     });
   }
 
-  function onDrop(e: DragEvent<HTMLDivElement>) {
-    e.preventDefault();
-    setDragging(false);
-    select(e.dataTransfer.files?.[0]);
-  }
-
   async function generate() {
     if (!file) return;
     setLoading(true);
@@ -64,74 +68,51 @@ export default function FaviconPage() {
 
   return (
     <>
-      <p className="page-intro">{t("favicon.intro")}</p>
+      <PageIntro>{t("favicon.intro")}</PageIntro>
 
-      <div className="layout">
-        <section className="panel">
-          <div
-            className={`dropzone ${dragging ? "dragging" : ""} ${
-              previewUrl ? "has-preview" : ""
-            }`}
-            onDragOver={(e) => {
-              e.preventDefault();
-              setDragging(true);
-            }}
-            onDragLeave={() => setDragging(false)}
-            onDrop={onDrop}
-            onClick={() => inputRef.current?.click()}
+      <Columns>
+        <Panel>
+          <Dropzone
+            onFiles={(files) => select(files[0])}
+            accept="image/*"
+            hasPreview={!!previewUrl}
           >
             {previewUrl ? (
-              <img src={previewUrl} alt="" className="preview" />
+              <DropzonePreview src={previewUrl} />
             ) : (
-              <div className="dropzone-hint">
-                <div className="icon">⭐</div>
-                <p>{t("favicon.dropTitle")}</p>
-                <span>{t("favicon.dropSub")}</span>
-              </div>
+              <DropzoneHint
+                icon="⭐"
+                title={t("favicon.dropTitle")}
+                sub={t("favicon.dropSub")}
+              />
             )}
-            <input
-              ref={inputRef}
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={(e) => select(e.target.files?.[0])}
-            />
-          </div>
-        </section>
+          </Dropzone>
+        </Panel>
 
-        <section className="panel controls">
+        <Panel className={styles.controls}>
           {previewUrl && (
-            <div className="field">
-              <span>{t("favicon.preview")}</span>
-              <div className="fav-previews">
+            <Field label={t("favicon.preview")}>
+              <div className={styles.previews}>
                 {PREVIEW_SIZES.map((s) => (
-                  <div key={s} className="fav-preview">
-                    <img
-                      src={previewUrl}
-                      alt=""
-                      style={{ width: s, height: s }}
-                    />
+                  <div key={s} className={styles.preview}>
+                    <img src={previewUrl} alt="" style={{ width: s, height: s }} />
                     <small>
                       {s}×{s}
                     </small>
                   </div>
                 ))}
               </div>
-            </div>
+            </Field>
           )}
 
-          <button
-            className="convert-btn"
-            onClick={generate}
-            disabled={!file || loading}
-          >
+          <Button block onClick={generate} disabled={!file || loading}>
             {loading ? t("favicon.generating") : t("favicon.generate")}
-          </button>
+          </Button>
 
-          {error && <div className="error">⚠️ {error}</div>}
-          {done && <div className="fav-done">{t("favicon.done")}</div>}
-        </section>
-      </div>
+          {error && <Alert>⚠️ {error}</Alert>}
+          {done && <Alert tone="success">{t("favicon.done")}</Alert>}
+        </Panel>
+      </Columns>
     </>
   );
 }

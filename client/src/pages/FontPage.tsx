@@ -6,6 +6,8 @@ import { useBatchConverter } from "../hooks/useBatchConverter";
 import { convertFont } from "../api/font";
 import { useI18n } from "../i18n";
 import { FONT_FORMATS, type FontFormat } from "../types";
+import { Panel, Columns, Field, Chips, PageIntro, Alert } from "../components/ui";
+import styles from "./ToolPage.module.scss";
 
 const ACCEPTED = [".ttf", ".otf", ".woff", ".woff2"];
 
@@ -31,36 +33,29 @@ export default function FontPage() {
 
   return (
     <>
-      <p className="page-intro">{t("font.intro")}</p>
+      <PageIntro>{t("font.intro")}</PageIntro>
 
-      <div className="layout">
-        <section className="panel">
+      <Columns>
+        <Panel>
           <BatchDropzone
             accept=".ttf,.otf,.woff,.woff2"
             hintTitle={t("font.dropTitle")}
             hintSub={t("font.dropSub")}
             onFiles={batch.addFiles}
           />
-          {batch.error && <div className="error">⚠️ {batch.error}</div>}
+          {batch.error && <Alert>⚠️ {batch.error}</Alert>}
           <JobList jobs={batch.jobs} showThumb={false} onRemove={batch.removeJob} />
-        </section>
+        </Panel>
 
-        <section className="panel controls">
-          <label className="field">
-            <span>{t("controls.format")}</span>
-            <div className="format-grid">
-              {FONT_FORMATS.map((f) => (
-                <button
-                  key={f}
-                  type="button"
-                  className={`chip ${format === f ? "active" : ""}`}
-                  onClick={() => setFormat(f)}
-                >
-                  {f.toUpperCase()}
-                </button>
-              ))}
-            </div>
-          </label>
+        <Panel className={styles.controls}>
+          <Field label={t("controls.format")}>
+            <Chips
+              options={FONT_FORMATS}
+              value={format}
+              onChange={setFormat}
+              render={(f) => f.toUpperCase()}
+            />
+          </Field>
 
           <BatchToolbar
             jobs={batch.jobs}
@@ -72,8 +67,8 @@ export default function FontPage() {
             onRun={handleRun}
             onClear={batch.clear}
           />
-        </section>
-      </div>
+        </Panel>
+      </Columns>
     </>
   );
 }
