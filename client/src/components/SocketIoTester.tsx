@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { io, type Socket } from "socket.io-client";
 import { useI18n } from "../i18n";
 import { useLog, LogView, parseMaybeJson } from "./Playground";
+import { Button, Badge, Field, type BadgeTone } from "./ui";
+import styles from "./Playground.module.scss";
 
 // Socket.IO tester. Loaded lazily so socket.io-client stays out of the main
 // bundle and only downloads when this tab is opened.
@@ -60,68 +62,63 @@ export default function SocketIoTester() {
   }
 
   const connected = status === "open";
+  const statusTone: BadgeTone =
+    status === "open" ? "success" : status === "connecting" ? "warn" : "neutral";
 
   return (
-    <div className="tool-io">
-      <p className="tool-note">{t("play.sioNote")}</p>
+    <div className={styles.io}>
+      <p className={styles.note}>{t("play.sioNote")}</p>
 
-      <div className="play-req-row">
+      <div className={styles.reqRow}>
         <input
-          className="play-url"
+          className={styles.url}
           placeholder="https://…"
           value={url}
           disabled={status !== "closed"}
           onChange={(e) => setUrl(e.target.value)}
         />
         {status === "closed" ? (
-          <button className="convert-btn slim" onClick={connect} disabled={!url}>
+          <Button size="sm" onClick={connect} disabled={!url}>
             {t("play.connect")}
-          </button>
+          </Button>
         ) : (
-          <button className="ghost-btn slim" onClick={disconnect}>
+          <Button variant="ghost" size="sm" onClick={disconnect}>
             {t("play.disconnect")}
-          </button>
+          </Button>
         )}
-        <span className={`badge play-ws-status play-ws-${status}`}>
-          {t(`play.${status}`)}
-        </span>
+        <Badge tone={statusTone}>{t(`play.${status}`)}</Badge>
       </div>
 
-      <label className="field">
-        <span>{t("play.sioPath")}</span>
+      <Field label={t("play.sioPath")}>
         <input
-          className="play-url"
+          className={styles.url}
           value={path}
           disabled={status !== "closed"}
           onChange={(e) => setPath(e.target.value)}
         />
-      </label>
+      </Field>
 
       <LogView log={log} empty={t("play.wsEmpty")} />
 
-      <div className="play-req-row">
+      <div className={styles.reqRow}>
         <input
-          className="play-sio-event"
+          className={styles.sioEvent}
           placeholder={t("play.sioEvent")}
           value={event}
           disabled={!connected}
           onChange={(e) => setEvent(e.target.value)}
         />
         <input
-          className="play-url"
+          className={styles.url}
           placeholder={t("play.sioPayload")}
           value={payload}
           disabled={!connected}
           onChange={(e) => setPayload(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && emit()}
         />
-        <button
-          className="convert-btn slim"
-          onClick={emit}
-          disabled={!connected || !event.trim()}
-        >
+        <Button size="sm" onClick={emit} disabled={!connected || !event.trim()}>
           {t("play.emit")}
-        </button>
+        </Button>
       </div>
     </div>
   );

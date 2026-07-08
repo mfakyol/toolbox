@@ -1,6 +1,7 @@
 import { lazy, Suspense, useState } from "react";
 import { useI18n } from "../i18n";
 import { HttpTester, WsTester } from "../components/Playground";
+import { Panel, PageIntro, SubNav } from "../components/ui";
 
 // Socket.IO and SignalR pull in heavy client libraries, so their testers are
 // code-split and only downloaded when their tab is opened.
@@ -21,25 +22,15 @@ export default function PlaygroundPage() {
 
   return (
     <>
-      <p className="page-intro">{t("play.intro")}</p>
+      <PageIntro>{t("play.intro")}</PageIntro>
 
-      <div className="subnav">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            className={`subnav-btn ${active === tab.id ? "active" : ""}`}
-            onClick={() => setActive(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <SubNav tabs={TABS} active={active} onChange={setActive} />
 
-      <section className="panel">
-        <Suspense fallback={<p className="page-intro">…</p>}>
+      <Panel>
+        <Suspense fallback={<PageIntro>…</PageIntro>}>
           <Active />
         </Suspense>
-      </section>
+      </Panel>
     </>
   );
 }

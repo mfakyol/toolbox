@@ -1,0 +1,75 @@
+@use "../styles/mixins" as *;
+
+.options {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.headActions {
+  display: flex;
+  gap: 8px;
+}
+
+.editorWrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+
+  :global(.cm-editor) {
+    height: 440px;
+    font-size: 0.82rem;
+  }
+  :global(.cm-editor.cm-focused) {
+    outline: none;
+  }
+  :global(.cm-scroller) {
+    font-family: var(--font-mono);
+    line-height: 1.55;
+  }
+  :global(.cm-editor),
+  :global(.cm-gutters) {
+    background: #0d0f14;
+  }
+}
+
+.empty {
+  @include code-surface;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.9rem;
+  min-height: 440px;
+}
+
+@media (max-width: 780px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}

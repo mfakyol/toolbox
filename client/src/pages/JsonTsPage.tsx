@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { jsonToTypescript, type DeclStyle } from "../utils/jsonToTs";
 import { CodeEditor } from "../components/CodeEditor";
 import { useI18n } from "../i18n";
+import { Panel, Field, Button, Alert, PageIntro } from "../components/ui";
+import styles from "./JsonTsPage.module.scss";
 
 const SAMPLE = JSON.stringify(
   {
@@ -59,20 +61,18 @@ export default function JsonTsPage() {
 
   return (
     <>
-      <p className="page-intro">{t("json.intro")}</p>
+      <PageIntro>{t("json.intro")}</PageIntro>
 
-      <div className="json-options">
-        <label className="field inline">
-          <span>{t("json.rootName")}</span>
+      <div className={styles.options}>
+        <Field label={t("json.rootName")} inline>
           <input
             type="text"
             value={rootName}
             onChange={(e) => setRootName(e.target.value)}
             spellCheck={false}
           />
-        </label>
-        <label className="field inline">
-          <span>{t("json.style")}</span>
+        </Field>
+        <Field label={t("json.style")} inline>
           <select
             value={style}
             onChange={(e) => setStyle(e.target.value as DeclStyle)}
@@ -80,18 +80,18 @@ export default function JsonTsPage() {
             <option value="interface">interface</option>
             <option value="type">type</option>
           </select>
-        </label>
-        <button className="ghost-btn slim" onClick={() => setInput(SAMPLE)}>
+        </Field>
+        <Button variant="ghost" size="sm" onClick={() => setInput(SAMPLE)}>
           {t("json.sample")}
-        </button>
+        </Button>
       </div>
 
-      <div className="json-layout">
-        <section className="panel json-panel">
-          <div className="json-head">
+      <div className={styles.layout}>
+        <Panel className={styles.panel}>
+          <div className={styles.head}>
             <span>{t("json.input")}</span>
           </div>
-          <div className="editor-wrap">
+          <div className={styles.editorWrap}>
             <CodeEditor
               value={input}
               language="json"
@@ -99,31 +99,31 @@ export default function JsonTsPage() {
               placeholder={t("json.placeholder")}
             />
           </div>
-          {error && <div className="error">⚠️ {error}</div>}
-        </section>
+          {error && <Alert>⚠️ {error}</Alert>}
+        </Panel>
 
-        <section className="panel json-panel">
-          <div className="json-head">
+        <Panel className={styles.panel}>
+          <div className={styles.head}>
             <span>{t("json.output")}</span>
             {output && (
-              <div className="json-head-actions">
-                <button className="ghost-btn slim" onClick={copy}>
+              <div className={styles.headActions}>
+                <Button variant="ghost" size="sm" onClick={copy}>
                   {copied ? t("json.copied") : t("json.copy")}
-                </button>
-                <button className="ghost-btn slim" onClick={download}>
+                </Button>
+                <Button variant="ghost" size="sm" onClick={download}>
                   {t("json.download")}
-                </button>
+                </Button>
               </div>
             )}
           </div>
           {output ? (
-            <div className="editor-wrap">
+            <div className={styles.editorWrap}>
               <CodeEditor value={output} language="typescript" readOnly />
             </div>
           ) : (
-            <div className="code-area empty">{t("json.empty")}</div>
+            <div className={styles.empty}>{t("json.empty")}</div>
           )}
-        </section>
+        </Panel>
       </div>
     </>
   );

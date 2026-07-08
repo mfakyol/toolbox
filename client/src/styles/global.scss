@@ -1,6 +1,5 @@
-// Global stylesheet entry (imported once in main.tsx).
-// Order matters: tokens define custom properties, base resets/typography,
-// then legacy component styles (being migrated to CSS modules phase by phase).
+// Global stylesheet entry (imported once in main.tsx). Only design tokens and
+// base element styling live globally — everything else is a co-located CSS
+// module owned by its component.
 @use "tokens";
 @use "base";
-@use "legacy";

@@ -9,8 +9,7 @@ import {
   HashTool,
   UuidTool,
 } from "../components/DevTools";
-import { Panel, PageIntro } from "../components/ui";
-import styles from "./ToolsPage.module.scss";
+import { Panel, PageIntro, SubNav } from "../components/ui";
 
 const TABS = [
   { id: "json", label: "JSON", El: JsonTool },
@@ -31,19 +30,7 @@ export default function ToolsPage() {
     <>
       <PageIntro>{t("tools.intro")}</PageIntro>
 
-      <div className={styles.subnav}>
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            className={`${styles.subnavBtn} ${
-              active === tab.id ? styles.active : ""
-            }`}
-            onClick={() => setActive(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <SubNav tabs={TABS} active={active} onChange={setActive} />
 
       <Panel>
         <Active />

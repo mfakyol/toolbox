@@ -8,3 +8,4 @@ server/uploads/*
 # Secrets — never commit the real env file
 .env
 
+.claude/launch.json

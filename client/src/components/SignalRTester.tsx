@@ -6,6 +6,8 @@ import {
 } from "@microsoft/signalr";
 import { useI18n } from "../i18n";
 import { useLog, LogView } from "./Playground";
+import { Button, Badge, Field, type BadgeTone } from "./ui";
+import styles from "./Playground.module.scss";
 
 // SignalR tester. Loaded lazily so @microsoft/signalr stays out of the main
 // bundle. Unlike Socket.IO, SignalR has no catch-all listener, so the user
@@ -83,69 +85,64 @@ export default function SignalRTester() {
   }
 
   const connected = status === "open";
+  const statusTone: BadgeTone =
+    status === "open" ? "success" : status === "connecting" ? "warn" : "neutral";
 
   return (
-    <div className="tool-io">
-      <p className="tool-note">{t("play.signalrNote")}</p>
+    <div className={styles.io}>
+      <p className={styles.note}>{t("play.signalrNote")}</p>
 
-      <div className="play-req-row">
+      <div className={styles.reqRow}>
         <input
-          className="play-url"
+          className={styles.url}
           placeholder="https://…/hub"
           value={url}
           disabled={status !== "closed"}
           onChange={(e) => setUrl(e.target.value)}
         />
         {status === "closed" ? (
-          <button className="convert-btn slim" onClick={connect} disabled={!url}>
+          <Button size="sm" onClick={connect} disabled={!url}>
             {t("play.connect")}
-          </button>
+          </Button>
         ) : (
-          <button className="ghost-btn slim" onClick={disconnect}>
+          <Button variant="ghost" size="sm" onClick={disconnect}>
             {t("play.disconnect")}
-          </button>
+          </Button>
         )}
-        <span className={`badge play-ws-status play-ws-${status}`}>
-          {t(`play.${status}`)}
-        </span>
+        <Badge tone={statusTone}>{t(`play.${status}`)}</Badge>
       </div>
 
-      <label className="field">
-        <span>{t("play.signalrListen")}</span>
+      <Field label={t("play.signalrListen")}>
         <input
-          className="play-url"
+          className={styles.url}
           placeholder="ReceiveMessage, Notify"
           value={listen}
           disabled={status !== "closed"}
           onChange={(e) => setListen(e.target.value)}
         />
-      </label>
+      </Field>
 
       <LogView log={log} empty={t("play.wsEmpty")} />
 
-      <div className="play-req-row">
+      <div className={styles.reqRow}>
         <input
-          className="play-sio-event"
+          className={styles.sioEvent}
           placeholder={t("play.signalrMethod")}
           value={method}
           disabled={!connected}
           onChange={(e) => setMethod(e.target.value)}
         />
         <input
-          className="play-url"
+          className={styles.url}
           placeholder={t("play.signalrArgs")}
           value={args}
           disabled={!connected}
           onChange={(e) => setArgs(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && invoke()}
         />
-        <button
-          className="convert-btn slim"
-          onClick={invoke}
-          disabled={!connected || !method.trim()}
-        >
+        <Button size="sm" onClick={invoke} disabled={!connected || !method.trim()}>
           {t("play.invoke")}
-        </button>
+        </Button>
       </div>
     </div>
   );

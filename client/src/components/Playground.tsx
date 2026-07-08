@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "../i18n";
 import { CopyButton } from "./CopyButton";
 import { formatBytes } from "../utils/format";
+import { Button, Badge, Field, Alert, type BadgeTone } from "./ui";
+import styles from "./Playground.module.scss";
 
 // ---- Shared log helpers (reused by the WS / Socket.IO / SignalR testers) ----
 export type LogDir = "in" | "out" | "sys";
@@ -27,17 +29,17 @@ export function LogView({ log, empty }: { log: LogEntry[]; empty: string }) {
   }, [log]);
 
   return (
-    <div className="play-ws-log">
+    <div className={styles.log}>
       {log.length === 0 ? (
-        <p className="empty">{empty}</p>
+        <p className={styles.empty}>{empty}</p>
       ) : (
         log.map((e, i) => (
-          <div className={`play-log-line play-log-${e.dir}`} key={i}>
-            <span className="play-log-time">{e.time}</span>
-            <span className="play-log-arrow">
+          <div className={`${styles.logLine} ${styles[e.dir]}`} key={i}>
+            <span className={styles.logTime}>{e.time}</span>
+            <span className={styles.logArrow}>
               {e.dir === "in" ? "←" : e.dir === "out" ? "→" : "•"}
             </span>
-            <span className="play-log-text">{e.text}</span>
+            <span className={styles.logText}>{e.text}</span>
           </div>
         ))
       )}
@@ -147,12 +149,12 @@ export function HttpTester() {
   }
 
   return (
-    <div className="tool-io">
-      <p className="tool-note">{t("play.httpNote")}</p>
+    <div className={styles.io}>
+      <p className={styles.note}>{t("play.httpNote")}</p>
 
-      <div className="play-req-row">
+      <div className={styles.reqRow}>
         <select
-          className="play-method"
+          className={styles.method}
           value={method}
           onChange={(e) => setMethod(e.target.value as Method)}
         >
@@ -163,20 +165,20 @@ export function HttpTester() {
           ))}
         </select>
         <input
-          className="play-url"
+          className={styles.url}
           placeholder="https://…"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
         />
-        <button className="convert-btn slim" onClick={send} disabled={sending || !url}>
+        <Button size="sm" onClick={send} disabled={sending || !url}>
           {sending ? t("play.sending") : t("play.send")}
-        </button>
+        </Button>
       </div>
 
-      <div className="field">
-        <span>{t("play.headers")}</span>
+      <div className={styles.group}>
+        <span className={styles.groupLabel}>{t("play.headers")}</span>
         {headers.map((row, i) => (
-          <div className="play-header-row" key={i}>
+          <div className={styles.headerRow} key={i}>
             <input
               placeholder={t("play.headerKey")}
               value={row.key}
@@ -187,53 +189,53 @@ export function HttpTester() {
               value={row.value}
               onChange={(e) => setHeader(i, { value: e.target.value })}
             />
-            <button className="ghost-btn slim" onClick={() => removeHeader(i)}>
+            <Button variant="ghost" size="sm" onClick={() => removeHeader(i)}>
               ✕
-            </button>
+            </Button>
           </div>
         ))}
-        <button className="ghost-btn slim play-add-header" onClick={addHeader}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className={styles.addHeader}
+          onClick={addHeader}
+        >
           + {t("play.addHeader")}
-        </button>
+        </Button>
       </div>
 
       {bodyAllowed && (
-        <label className="field">
-          <span>{t("play.body")}</span>
+        <Field label={t("play.body")}>
           <textarea
-            className="secret-textarea"
+            className={styles.textarea}
             placeholder='{ "key": "value" }'
             value={body}
             onChange={(e) => setBody(e.target.value)}
           />
-        </label>
+        </Field>
       )}
 
-      {error && <div className="error">{error}</div>}
+      {error && <Alert>{error}</Alert>}
 
       {result && (
-        <div className="play-response">
-          <div className="play-status-bar">
-            <span
-              className={`badge ${
-                result.status < 400 ? "secret-status-viewed" : "badge-error"
-              }`}
-            >
+        <div className={styles.response}>
+          <div className={styles.statusBar}>
+            <Badge tone={result.status < 400 ? "success" : "danger"}>
               {result.status} {result.statusText}
-            </span>
-            <span className="muted">{result.timeMs} ms</span>
-            <span className="muted">{formatBytes(result.size)}</span>
+            </Badge>
+            <span className={styles.muted}>{result.timeMs} ms</span>
+            <span className={styles.muted}>{formatBytes(result.size)}</span>
             <CopyButton text={result.body} />
           </div>
 
           {result.headers.length > 0 && (
-            <details className="play-headers-out">
+            <details className={styles.headersOut}>
               <summary>{t("play.respHeaders")}</summary>
               <pre>{result.headers.map(([k, v]) => `${k}: ${v}`).join("\n")}</pre>
             </details>
           )}
 
-          <pre className="play-body-out">{prettyBody(result)}</pre>
+          <pre className={styles.bodyOut}>{prettyBody(result)}</pre>
         </div>
       )}
     </div>
@@ -291,51 +293,47 @@ export function WsTester() {
   }
 
   const connected = status === "open";
+  const statusTone: BadgeTone =
+    status === "open" ? "success" : status === "connecting" ? "warn" : "neutral";
 
   return (
-    <div className="tool-io">
-      <p className="tool-note">{t("play.wsNote")}</p>
+    <div className={styles.io}>
+      <p className={styles.note}>{t("play.wsNote")}</p>
 
-      <div className="play-req-row">
+      <div className={styles.reqRow}>
         <input
-          className="play-url"
+          className={styles.url}
           placeholder="wss://…"
           value={url}
           disabled={status !== "closed"}
           onChange={(e) => setUrl(e.target.value)}
         />
         {status === "closed" ? (
-          <button className="convert-btn slim" onClick={connect} disabled={!url}>
+          <Button size="sm" onClick={connect} disabled={!url}>
             {t("play.connect")}
-          </button>
+          </Button>
         ) : (
-          <button className="ghost-btn slim" onClick={disconnect}>
+          <Button variant="ghost" size="sm" onClick={disconnect}>
             {t("play.disconnect")}
-          </button>
+          </Button>
         )}
-        <span className={`badge play-ws-status play-ws-${status}`}>
-          {t(`play.${status}`)}
-        </span>
+        <Badge tone={statusTone}>{t(`play.${status}`)}</Badge>
       </div>
 
       <LogView log={log} empty={t("play.wsEmpty")} />
 
-      <div className="play-req-row">
+      <div className={styles.reqRow}>
         <input
-          className="play-url"
+          className={styles.url}
           placeholder={t("play.wsMessage")}
           value={message}
           disabled={!connected}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
-        <button
-          className="convert-btn slim"
-          onClick={sendMessage}
-          disabled={!connected || !message}
-        >
+        <Button size="sm" onClick={sendMessage} disabled={!connected || !message}>
           {t("play.send")}
-        </button>
+        </Button>
       </div>
     </div>
   );
