@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode";
 import { useI18n } from "../i18n";
+import { Panel, Field, PageIntro, LinkButton } from "../components/ui";
+import styles from "./QrPage.module.scss";
 
 type Ecc = "L" | "M" | "Q" | "H";
 
@@ -96,23 +98,21 @@ export default function QrPage() {
 
   return (
     <div>
-      <p className="page-intro">{t("qr.intro")}</p>
+      <PageIntro>{t("qr.intro")}</PageIntro>
 
-      <div className="qr-layout">
+      <div className={styles.layout}>
         {/* Controls */}
-        <div className="panel qr-controls">
-          <label className="field">
-            <span>{t("qr.content")}</span>
+        <Panel className={styles.controls}>
+          <Field label={t("qr.content")}>
             <textarea
-              className="qr-textarea"
+              className={styles.textarea}
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder={t("qr.contentPlaceholder")}
             />
-          </label>
+          </Field>
 
-          <label className="field">
-            <span>{t("qr.ecc")}</span>
+          <Field label={t("qr.ecc")}>
             <select value={ecc} onChange={(e) => setEcc(e.target.value as Ecc)}>
               {ECC_LEVELS.map((level) => (
                 <option key={level.id} value={level.id}>
@@ -120,14 +120,11 @@ export default function QrPage() {
                 </option>
               ))}
             </select>
-          </label>
-          <p className="qr-hint">{t("qr.eccHint")}</p>
+          </Field>
+          <p className={styles.hint}>{t("qr.eccHint")}</p>
 
-          <div className="field row">
-            <label>
-              <span>
-                {t("qr.size")} ({size}px)
-              </span>
+          <div className={styles.row}>
+            <Field label={`${t("qr.size")} (${size}px)`}>
               <input
                 type="range"
                 min={128}
@@ -136,9 +133,8 @@ export default function QrPage() {
                 value={size}
                 onChange={(e) => setSize(Number(e.target.value))}
               />
-            </label>
-            <label>
-              <span>{t("qr.margin")}</span>
+            </Field>
+            <Field label={t("qr.margin")}>
               <input
                 type="number"
                 min={0}
@@ -146,59 +142,57 @@ export default function QrPage() {
                 value={margin}
                 onChange={(e) => setMargin(Number(e.target.value))}
               />
-            </label>
+            </Field>
           </div>
 
-          <div className="field row">
-            <label>
-              <span>{t("qr.fg")}</span>
+          <div className={styles.row}>
+            <Field label={t("qr.fg")}>
               <input
                 type="color"
-                className="qr-color"
+                className={styles.color}
                 value={fg}
                 onChange={(e) => setFg(e.target.value)}
               />
-            </label>
-            <label>
-              <span>{t("qr.bg")}</span>
+            </Field>
+            <Field label={t("qr.bg")}>
               <input
                 type="color"
-                className="qr-color"
+                className={styles.color}
                 value={bg}
                 onChange={(e) => setBg(e.target.value)}
               />
-            </label>
+            </Field>
           </div>
-        </div>
+        </Panel>
 
         {/* Preview + export */}
-        <div className="panel qr-result">
+        <Panel className={styles.result}>
           {error ? (
-            <p className="qr-error">{t("qr.tooLong")}</p>
+            <p className={styles.error}>{t("qr.tooLong")}</p>
           ) : svg ? (
             <>
               <div
-                className="qr-preview"
+                className={styles.preview}
                 style={{ background: bg }}
                 dangerouslySetInnerHTML={{ __html: svg }}
               />
-              <div className="qr-downloads">
+              <div className={styles.downloads}>
                 {pngUrl && (
-                  <a className="download-btn" href={pngUrl} download="qr.png">
+                  <LinkButton variant="success" block href={pngUrl} download="qr.png">
                     {t("qr.downloadPng")}
-                  </a>
+                  </LinkButton>
                 )}
                 {svgUrl && (
-                  <a className="download-btn" href={svgUrl} download="qr.svg">
+                  <LinkButton variant="success" block href={svgUrl} download="qr.svg">
                     {t("qr.downloadSvg")}
-                  </a>
+                  </LinkButton>
                 )}
               </div>
             </>
           ) : (
-            <p className="qr-placeholder">{t("qr.empty")}</p>
+            <p className={styles.placeholder}>{t("qr.empty")}</p>
           )}
-        </div>
+        </Panel>
       </div>
     </div>
   );
