@@ -4,7 +4,7 @@ import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n";
 
 export default function LoginPage() {
-  const { user, loading, login } = useAuth();
+  const { user, loading, authRequired, login } = useAuth();
   const { t } = useI18n();
 
   const [email, setEmail] = useState("");
@@ -12,6 +12,9 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // Auth disabled → there is no login; send everyone to the app.
+  if (!loading && !authRequired) return <Navigate to="/" replace />;
 
   // Already logged in → bounce to the app (or the forced password change).
   if (!loading && user) {

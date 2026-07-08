@@ -5,7 +5,7 @@ import { LangSwitcher } from "./LangSwitcher";
 
 export function Layout() {
   const { t } = useI18n();
-  const { user, logout } = useAuth();
+  const { user, logout, authRequired } = useAuth();
   const navigate = useNavigate();
 
   async function onLogout() {
@@ -20,7 +20,7 @@ export function Layout() {
           <h1>{t("app.title")}</h1>
           <div className="header-actions">
             <LangSwitcher />
-            {user && (
+            {authRequired && user && (
               <>
                 <span className="user-email">{user.email}</span>
                 <button className="ghost-btn" onClick={onLogout}>
@@ -80,7 +80,7 @@ export function Layout() {
           >
             {t("nav.play")}
           </NavLink>
-          {user?.role === "admin" && (
+          {authRequired && user?.role === "admin" && (
             <NavLink
               to="/admin/users"
               className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}

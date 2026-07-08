@@ -1,10 +1,12 @@
 import type { RequestHandler } from "express";
 import * as secretService from "../services/secret.service.js";
+import { ownerId } from "../config/index.js";
 
-// POST /api/secrets — create a one-time secret (requires login).
+// POST /api/secrets — create a one-time secret (login required unless auth is
+// disabled, in which case it belongs to the shared anonymous owner).
 export const create: RequestHandler = async (req, res, next) => {
   try {
-    const secret = await secretService.createSecret(req.user!.id, {
+    const secret = await secretService.createSecret(ownerId(req), {
       content: req.body?.content,
       passphrase: req.body?.passphrase,
       ttlSeconds: Number(req.body?.ttlSeconds) || undefined,
@@ -19,7 +21,7 @@ export const create: RequestHandler = async (req, res, next) => {
 // GET /api/secrets — the current user's secrets (metadata only).
 export const list: RequestHandler = async (req, res, next) => {
   try {
-    const secrets = await secretService.listByOwner(req.user!.id);
+    const secrets = await secretService.listByOwner(ownerId(req));
     res.json({ secrets });
   } catch (err) {
     next(err);

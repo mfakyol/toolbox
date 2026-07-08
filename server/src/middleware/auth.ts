@@ -1,8 +1,12 @@
 import type { RequestHandler } from "express";
 import { AppError } from "../utils/AppError.js";
+import { config } from "../config/index.js";
 
-// Requires an authenticated session.
+// Requires an authenticated session — unless auth is disabled globally
+// (config.authRequired === false), in which case every request passes through
+// and owner-scoped controllers fall back to the shared anonymous owner.
 export const requireAuth: RequestHandler = (req, _res, next) => {
+  if (!config.authRequired) return next();
   if (!req.isAuthenticated?.() || !req.user) {
     return next(new AppError("Giriş yapmanız gerekiyor.", 401));
   }

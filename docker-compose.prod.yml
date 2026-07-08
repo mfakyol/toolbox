@@ -28,6 +28,9 @@ services:
     environment:
       - PORT=6000
       - NODE_ENV=production
+      # Access mode: true = login-gated (default), false = fully open. See
+      # .env.example. Read by the auth middleware and exposed at /api/config.
+      - AUTH_REQUIRED=${AUTH_REQUIRED:-true}
       # External traffic is HTTPS (host nginx). Proto is propagated all the way
       # down, so issue Secure cookies.
       - COOKIE_SECURE=true

@@ -2,12 +2,15 @@ import type { RequestHandler } from "express";
 import { ZipArchive } from "archiver";
 import * as transferService from "../services/transfer.service.js";
 import { storedFilePath } from "../middleware/uploadTransfer.js";
+import { ownerId } from "../config/index.js";
 
-// POST /api/transfers — multipart upload of one or more files (requires login).
+// POST /api/transfers — multipart upload of one or more files (login required
+// unless auth is disabled, in which case it belongs to the shared anonymous
+// owner).
 export const create: RequestHandler = async (req, res, next) => {
   try {
     const transfer = await transferService.createTransfer(
-      req.user!.id,
+      ownerId(req),
       (req.files as Express.Multer.File[]) ?? [],
       {
         message: req.body?.message,
@@ -25,7 +28,7 @@ export const create: RequestHandler = async (req, res, next) => {
 // GET /api/transfers — current user's transfers (metadata only).
 export const list: RequestHandler = async (req, res, next) => {
   try {
-    const transfers = await transferService.listByOwner(req.user!.id);
+    const transfers = await transferService.listByOwner(ownerId(req));
     res.json({ transfers });
   } catch (err) {
     next(err);
@@ -96,7 +99,7 @@ export const download: RequestHandler = async (req, res, next) => {
 // DELETE /api/transfers/:id — owner removes a transfer and its files.
 export const remove: RequestHandler = async (req, res, next) => {
   try {
-    await transferService.deleteTransfer(req.user!.id, req.params.id);
+    await transferService.deleteTransfer(ownerId(req), req.params.id);
     res.json({ ok: true });
   } catch (err) {
     next(err);

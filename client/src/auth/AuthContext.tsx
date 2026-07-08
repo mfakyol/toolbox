@@ -9,10 +9,13 @@ import {
 } from "react";
 import * as authApi from "../api/auth";
 import type { AuthUser } from "../api/auth";
+import { fetchConfig } from "../api/config";
 
 interface AuthContextValue {
   user: AuthUser | null;
   loading: boolean;
+  // When false, the app is open: no login gate, no admin/users area.
+  authRequired: boolean;
   login: (email: string, password: string, rememberMe: boolean) => Promise<void>;
   logout: () => Promise<void>;
   changePassword: (current: string, next: string) => Promise<void>;
@@ -22,15 +25,20 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [authRequired, setAuthRequired] = useState(true);
   const [loading, setLoading] = useState(true);
 
-  // Restore the session on first load.
+  // Read the runtime config and restore the session on first load.
   useEffect(() => {
-    authApi
-      .fetchMe()
-      .then(({ user }) => setUser(user))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
+    Promise.all([
+      fetchConfig()
+        .then((c) => setAuthRequired(c.authRequired))
+        .catch(() => setAuthRequired(true)),
+      authApi
+        .fetchMe()
+        .then(({ user }) => setUser(user))
+        .catch(() => setUser(null)),
+    ]).finally(() => setLoading(false));
   }, []);
 
   const login = useCallback(
@@ -52,8 +60,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, loading, login, logout, changePassword }),
-    [user, loading, login, logout, changePassword]
+    () => ({ user, loading, authRequired, login, logout, changePassword }),
+    [user, loading, authRequired, login, logout, changePassword]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
