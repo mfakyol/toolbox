@@ -1,0 +1,33 @@
+.seg {
+  display: inline-flex;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 3px;
+}
+
+.btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease);
+
+  &:hover {
+    color: var(--text);
+  }
+}
+
+.active {
+  background: var(--gradient);
+  color: #fff;
+
+  &:hover {
+    color: #fff;
+  }
+}

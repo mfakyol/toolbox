@@ -1,0 +1,30 @@
+.subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.subnavBtn {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease),
+    background var(--dur) var(--ease);
+
+  &:hover {
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+
+  &.active {
+    background: var(--gradient);
+    border-color: transparent;
+    color: #fff;
+  }
+}

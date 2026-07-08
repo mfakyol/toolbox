@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "../i18n";
 import { CopyButton } from "./CopyButton";
+import { Field, Button, Alert, Segmented } from "./ui";
 import {
   base64Encode,
   base64Decode,
@@ -11,6 +12,7 @@ import {
   type HashAlgo,
 } from "../utils/devtools";
 import { diffLines } from "../utils/diff";
+import styles from "./DevTools.module.scss";
 
 // Shared: input → transform → output layout.
 function IOArea(props: {
@@ -25,36 +27,55 @@ function IOArea(props: {
   const { inputLabel, outputLabel, input, output, error, onInput, controls } =
     props;
   return (
-    <div className="tool-io">
-      <label className="field">
-        <span>{inputLabel}</span>
+    <div className={styles.io}>
+      <Field label={inputLabel}>
         <textarea
-          className="code-area small"
+          className={styles.codeArea}
           value={input}
           onChange={(e) => onInput(e.target.value)}
           spellCheck={false}
         />
-      </label>
+      </Field>
 
-      {controls && <div className="tool-controls">{controls}</div>}
+      {controls && <div className={styles.controls}>{controls}</div>}
 
-      <label className="field">
-        <div className="tool-out-head">
+      <div className={styles.col}>
+        <div className={`${styles.colHead} ${styles.between}`}>
           <span>{outputLabel}</span>
           <CopyButton text={output} />
         </div>
         {error ? (
-          <div className="error">⚠️ {error}</div>
+          <Alert>⚠️ {error}</Alert>
         ) : (
           <textarea
-            className="code-area small"
+            className={styles.codeArea}
             value={output}
             readOnly
             spellCheck={false}
           />
         )}
-      </label>
+      </div>
     </div>
+  );
+}
+
+function EncodeDecode({
+  mode,
+  onChange,
+}: {
+  mode: "encode" | "decode";
+  onChange: (m: "encode" | "decode") => void;
+}) {
+  const { t } = useI18n();
+  return (
+    <Segmented
+      value={mode}
+      onChange={onChange}
+      options={[
+        { value: "encode", label: t("tools.encode") },
+        { value: "decode", label: t("tools.decode") },
+      ]}
+    />
   );
 }
 
@@ -83,22 +104,7 @@ export function Base64Tool() {
       output={output}
       error={error}
       onInput={setInput}
-      controls={
-        <div className="seg">
-          <button
-            className={`seg-btn ${mode === "encode" ? "active" : ""}`}
-            onClick={() => setMode("encode")}
-          >
-            {t("tools.encode")}
-          </button>
-          <button
-            className={`seg-btn ${mode === "decode" ? "active" : ""}`}
-            onClick={() => setMode("decode")}
-          >
-            {t("tools.decode")}
-          </button>
-        </div>
-      }
+      controls={<EncodeDecode mode={mode} onChange={setMode} />}
     />
   );
 }
@@ -131,22 +137,7 @@ export function UrlTool() {
       output={output}
       error={error}
       onInput={setInput}
-      controls={
-        <div className="seg">
-          <button
-            className={`seg-btn ${mode === "encode" ? "active" : ""}`}
-            onClick={() => setMode("encode")}
-          >
-            {t("tools.encode")}
-          </button>
-          <button
-            className={`seg-btn ${mode === "decode" ? "active" : ""}`}
-            onClick={() => setMode("decode")}
-          >
-            {t("tools.decode")}
-          </button>
-        </div>
-      }
+      controls={<EncodeDecode mode={mode} onChange={setMode} />}
     />
   );
 }
@@ -178,7 +169,7 @@ export function JwtTool() {
       output={output}
       error={error}
       onInput={setToken}
-      controls={<span className="tool-note">{t("tools.jwtNote")}</span>}
+      controls={<span className={styles.note}>{t("tools.jwtNote")}</span>}
     />
   );
 }
@@ -211,19 +202,15 @@ export function HashTool() {
       output={output}
       onInput={setInput}
       controls={
-        <label className="field inline">
-          <span>{t("tools.algo")}</span>
-          <select
-            value={algo}
-            onChange={(e) => setAlgo(e.target.value as HashAlgo)}
-          >
+        <Field label={t("tools.algo")} inline>
+          <select value={algo} onChange={(e) => setAlgo(e.target.value as HashAlgo)}>
             {HASH_ALGOS.map((a) => (
               <option key={a} value={a}>
                 {a}
               </option>
             ))}
           </select>
-        </label>
+        </Field>
       }
     />
   );
@@ -239,32 +226,30 @@ export function DiffTool() {
   const changed = result.added > 0 || result.removed > 0;
 
   return (
-    <div className="tool-io">
-      <div className="diff-inputs">
-        <label className="field">
-          <span>{t("tools.left")}</span>
+    <div className={styles.io}>
+      <div className={styles.diffInputs}>
+        <Field label={t("tools.left")}>
           <textarea
-            className="code-area small"
+            className={styles.codeArea}
             value={left}
             onChange={(e) => setLeft(e.target.value)}
             spellCheck={false}
           />
-        </label>
-        <label className="field">
-          <span>{t("tools.right")}</span>
+        </Field>
+        <Field label={t("tools.right")}>
           <textarea
-            className="code-area small"
+            className={styles.codeArea}
             value={right}
             onChange={(e) => setRight(e.target.value)}
             spellCheck={false}
           />
-        </label>
+        </Field>
       </div>
 
       {hasInput && (
-        <div className="diff-stats">
-          <span className="diff-added">{t("tools.added", { n: result.added })}</span>
-          <span className="diff-removed">
+        <div className={styles.diffStats}>
+          <span className={styles.added}>{t("tools.added", { n: result.added })}</span>
+          <span className={styles.removed}>
             {t("tools.removed", { n: result.removed })}
           </span>
         </div>
@@ -272,18 +257,27 @@ export function DiffTool() {
 
       {hasInput &&
         (changed ? (
-          <div className="diff-view">
+          <div className={styles.diffView}>
             {result.rows.map((row, i) => (
-              <div key={i} className={`diff-row diff-${row.type}`}>
-                <span className="diff-gutter">{row.leftNo ?? ""}</span>
-                <span className="diff-cell left">{row.left ?? ""}</span>
-                <span className="diff-gutter">{row.rightNo ?? ""}</span>
-                <span className="diff-cell right">{row.right ?? ""}</span>
+              <div
+                key={i}
+                className={[styles.diffRow, styles[row.type]]
+                  .filter(Boolean)
+                  .join(" ")}
+              >
+                <span className={styles.gutter}>{row.leftNo ?? ""}</span>
+                <span className={`${styles.cell} ${styles.cellLeft}`}>
+                  {row.left ?? ""}
+                </span>
+                <span className={styles.gutter}>{row.rightNo ?? ""}</span>
+                <span className={`${styles.cell} ${styles.cellRight}`}>
+                  {row.right ?? ""}
+                </span>
               </div>
             ))}
           </div>
         ) : (
-          <div className="fav-done">{t("tools.identical")}</div>
+          <Alert tone="success">{t("tools.identical")}</Alert>
         ))}
     </div>
   );
@@ -311,25 +305,18 @@ export function JsonTool() {
   }, [input, mode, indent]);
 
   return (
-    <div className="tool-io">
-      <div className="tool-controls">
-        <div className="seg">
-          <button
-            className={`seg-btn ${mode === "format" ? "active" : ""}`}
-            onClick={() => setMode("format")}
-          >
-            {t("tools.format")}
-          </button>
-          <button
-            className={`seg-btn ${mode === "minify" ? "active" : ""}`}
-            onClick={() => setMode("minify")}
-          >
-            {t("tools.minify")}
-          </button>
-        </div>
+    <div className={styles.io}>
+      <div className={styles.controls}>
+        <Segmented
+          value={mode}
+          onChange={setMode}
+          options={[
+            { value: "format", label: t("tools.format") },
+            { value: "minify", label: t("tools.minify") },
+          ]}
+        />
         {mode === "format" && (
-          <label className="field inline">
-            <span>{t("tools.indent")}</span>
+          <Field label={t("tools.indent")} inline>
             <select
               value={indent}
               onChange={(e) => setIndent(Number(e.target.value))}
@@ -337,36 +324,36 @@ export function JsonTool() {
               <option value={2}>2</option>
               <option value={4}>4</option>
             </select>
-          </label>
+          </Field>
         )}
       </div>
 
-      <div className="io-split">
-        <label className="field">
-          <span>{t("tools.input")}</span>
+      <div className={styles.split}>
+        <div className={styles.col}>
+          <div className={styles.colHead}>{t("tools.input")}</div>
           <textarea
-            className="code-area small"
+            className={`${styles.codeArea} ${styles.splitArea}`}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             spellCheck={false}
           />
-        </label>
-        <label className="field">
-          <div className="tool-out-head">
+        </div>
+        <div className={styles.col}>
+          <div className={`${styles.colHead} ${styles.between}`}>
             <span>{valid ? t("tools.valid") : t("tools.output")}</span>
             <CopyButton text={output} />
           </div>
           {error ? (
-            <div className="error">⚠️ {error}</div>
+            <Alert>⚠️ {error}</Alert>
           ) : (
             <textarea
-              className="code-area small"
+              className={`${styles.codeArea} ${styles.splitArea}`}
               value={output}
               readOnly
               spellCheck={false}
             />
           )}
-        </label>
+        </div>
       </div>
     </div>
   );
@@ -380,10 +367,9 @@ export function UuidTool() {
   const output = list.join("\n");
 
   return (
-    <div className="tool-io">
-      <div className="tool-controls">
-        <label className="field inline">
-          <span>{t("tools.count")}</span>
+    <div className={styles.io}>
+      <div className={styles.controls}>
+        <Field label={t("tools.count")} inline>
           <input
             type="number"
             min={1}
@@ -393,17 +379,14 @@ export function UuidTool() {
               setCount(Math.min(100, Math.max(1, Number(e.target.value) || 1)))
             }
           />
-        </label>
-        <button
-          className="ghost-btn slim"
-          onClick={() => setList(generateUuids(count))}
-        >
+        </Field>
+        <Button variant="ghost" size="sm" onClick={() => setList(generateUuids(count))}>
           {t("tools.generate")}
-        </button>
+        </Button>
         <CopyButton text={output} />
       </div>
       <textarea
-        className="code-area small"
+        className={styles.codeArea}
         value={output}
         readOnly
         spellCheck={false}

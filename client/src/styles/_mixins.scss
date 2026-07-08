@@ -78,6 +78,26 @@
   }
 }
 
+@mixin code-surface {
+  width: 100%;
+  background: #0d0f14;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  padding: 14px;
+  tab-size: 2;
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: var(--ring);
+  }
+}
+
 @mixin data-table {
   width: 100%;
   border-collapse: collapse;
