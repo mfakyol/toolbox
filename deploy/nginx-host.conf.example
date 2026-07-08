@@ -1,11 +1,11 @@
 # =========================================================================
 # HOST nginx (on the Linux server, NOT in a container).
-# Terminates TLS for tools.fatihakyol.com and reverse-proxies to the app
+# Terminates TLS for toolbox.fatihakyol.com and reverse-proxies to the app
 # container published on 127.0.0.1:8080 by docker-compose.prod.yml.
 #
-# Install to e.g. /etc/nginx/sites-available/tools.fatihakyol.com and symlink into
+# Install to e.g. /etc/nginx/sites-available/toolbox.fatihakyol.com and symlink into
 # sites-enabled, then get a certificate:
-#   sudo certbot --nginx -d tools.fatihakyol.com
+#   sudo certbot --nginx -d toolbox.fatihakyol.com
 # certbot will fill in the ssl_certificate lines and the port-443 server block.
 # =========================================================================
 
@@ -13,18 +13,18 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name tools.fatihakyol.com;
+    server_name toolbox.fatihakyol.com;
     return 301 https://$host$request_uri;
 }
 
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
-    server_name tools.fatihakyol.com;
+    server_name toolbox.fatihakyol.com;
 
     # --- TLS (certbot manages these) ---
-    ssl_certificate     /etc/letsencrypt/live/tools.fatihakyol.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/tools.fatihakyol.com/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/toolbox.fatihakyol.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/toolbox.fatihakyol.com/privkey.pem;
 
     # Large file transfers (match / exceed MAX_TRANSFER_SIZE).
     client_max_body_size 2048m;

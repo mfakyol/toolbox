@@ -122,9 +122,9 @@ $EDITOR .env               # DOMAIN, SESSION_SECRET, SECRET_ENCRYPTION_KEY, ADMI
 docker compose -f docker-compose.prod.yml up -d --build
 
 # 3. Host nginx: point your server block at 127.0.0.1:8080 and get a cert
-sudo cp deploy/nginx-host.conf.example /etc/nginx/sites-available/tools.fatihakyol.com
-sudo ln -s /etc/nginx/sites-available/tools.fatihakyol.com /etc/nginx/sites-enabled/
-sudo certbot --nginx -d tools.fatihakyol.com
+sudo cp deploy/nginx-host.conf.example /etc/nginx/sites-available/toolbox.fatihakyol.com
+sudo ln -s /etc/nginx/sites-available/toolbox.fatihakyol.com /etc/nginx/sites-enabled/
+sudo certbot --nginx -d toolbox.fatihakyol.com
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
