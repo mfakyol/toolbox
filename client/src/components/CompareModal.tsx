@@ -3,6 +3,7 @@ import type { Job } from "../types";
 import { CompareSlider } from "./CompareSlider";
 import { formatBytes } from "../utils/format";
 import { useI18n } from "../i18n";
+import styles from "./CompareModal.module.scss";
 
 interface Props {
   job: Job;
@@ -31,13 +32,13 @@ export function CompareModal({ job, onClose }: Props) {
   const result = job.result;
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-head">
-          <span className="modal-title" title={job.file.name}>
+    <div className={styles.backdrop} onClick={onClose}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.head}>
+          <span className={styles.title} title={job.file.name}>
             {job.file.name}
           </span>
-          <button className="modal-close" onClick={onClose} type="button">
+          <button className={styles.close} onClick={onClose} type="button">
             ✕
           </button>
         </div>
@@ -55,7 +56,7 @@ export function CompareModal({ job, onClose }: Props) {
           />
         )}
 
-        <p className="modal-foot">
+        <p className={styles.foot}>
           {t("compare.hint")}
           {result?.meta && ` · ${result.meta}`}
         </p>

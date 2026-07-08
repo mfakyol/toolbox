@@ -3,6 +3,8 @@ import type { Job } from "../types";
 import { MAX_CONCURRENCY } from "../types";
 import { downloadZip } from "../utils/zip";
 import { useI18n } from "../i18n";
+import { Button, Progress } from "./ui";
+import styles from "./BatchToolbar.module.scss";
 
 interface Props {
   jobs: Job[];
@@ -42,29 +44,27 @@ export function BatchToolbar({
   }
 
   return (
-    <div className="batch-toolbar">
-      <div className="batch-progress">
-        <div className="batch-bar">
-          <div className="batch-bar-fill" style={{ width: `${pct}%` }} />
-        </div>
-        <span className="batch-count">
+    <div className={styles.toolbar}>
+      <div className={styles.progress}>
+        <Progress value={pct} />
+        <span className={styles.count}>
           {t("toolbar.progress", { done, total })}
           {running && t("toolbar.parallel", { n: MAX_CONCURRENCY })}
         </span>
       </div>
 
-      <div className="batch-actions">
-        <button className="convert-btn" onClick={onRun} disabled={running}>
+      <div className={styles.actions}>
+        <Button block onClick={onRun} disabled={running}>
           {running ? t("toolbar.running") : runLabel}
-        </button>
+        </Button>
         {done > 0 && (
-          <button className="ghost-btn" onClick={handleZip} disabled={zipping}>
+          <Button variant="ghost" block onClick={handleZip} disabled={zipping}>
             {zipping ? t("toolbar.zipping") : t("toolbar.zip", { n: done })}
-          </button>
+          </Button>
         )}
-        <button className="ghost-btn" onClick={onClear} disabled={running}>
+        <Button variant="ghost" block onClick={onClear} disabled={running}>
           {t("toolbar.clear")}
-        </button>
+        </Button>
       </div>
     </div>
   );

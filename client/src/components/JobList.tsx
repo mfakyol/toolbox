@@ -2,12 +2,21 @@ import { useEffect, useState } from "react";
 import type { Job, JobStatus } from "../types";
 import { formatBytes } from "../utils/format";
 import { useI18n } from "../i18n";
+import { Badge, type BadgeTone } from "./ui";
+import styles from "./JobList.module.scss";
 
 const STATUS_KEY: Record<JobStatus, string> = {
   queued: "job.queued",
   processing: "job.processing",
   done: "job.done",
   error: "job.error",
+};
+
+const STATUS_TONE: Record<JobStatus, BadgeTone> = {
+  queued: "neutral",
+  processing: "accent",
+  done: "success",
+  error: "danger",
 };
 
 // Small thumbnail for image files; manages its object URL within its own lifecycle.
@@ -20,8 +29,10 @@ function Thumbnail({ file }: { file: File }) {
     return () => URL.revokeObjectURL(u);
   }, [file]);
 
-  return url ? <img className="job-thumb" src={url} alt="" /> : (
-    <div className="job-thumb placeholder" />
+  return url ? (
+    <img className={styles.thumb} src={url} alt="" />
+  ) : (
+    <div className={`${styles.thumb} ${styles.placeholder}`} />
   );
 }
 
@@ -37,41 +48,51 @@ function JobRow({ job, showThumb, onRemove, onCompare }: RowProps) {
   const good = result ? result.savings >= 0 : true;
   const { t } = useI18n();
 
+  const rowCls = [
+    styles.row,
+    status === "error" && styles.rowError,
+    status === "done" && styles.rowDone,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div className={`job-row status-${status}`}>
+    <div className={rowCls}>
       {showThumb ? (
         <Thumbnail file={file} />
       ) : (
-        <div className="job-thumb placeholder">🔤</div>
+        <div className={`${styles.thumb} ${styles.placeholder}`}>🔤</div>
       )}
 
-      <div className="job-info">
-        <span className="job-name" title={file.name}>
+      <div className={styles.info}>
+        <span className={styles.name} title={file.name}>
           {file.name}
         </span>
-        <span className="job-sub">
+        <span className={styles.sub}>
           {result ? (
             <>
               {formatBytes(result.originalSize)} → {formatBytes(result.outputSize)}
-              <em className={`savings-inline ${good ? "good" : "bad"}`}>
+              <em
+                className={`${styles.savings} ${good ? styles.good : styles.bad}`}
+              >
                 {good ? "−" : "+"}
                 {Math.abs(result.savings)}%
               </em>
               {result.meta && <> · {result.meta}</>}
             </>
           ) : error ? (
-            <span className="job-error">{error}</span>
+            <span className={styles.error}>{error}</span>
           ) : (
             formatBytes(file.size)
           )}
         </span>
       </div>
 
-      <span className={`badge badge-${status}`}>{t(STATUS_KEY[status])}</span>
+      <Badge tone={STATUS_TONE[status]}>{t(STATUS_KEY[status])}</Badge>
 
       {result && onCompare && (
         <button
-          className="job-download"
+          className={styles.iconBtn}
           onClick={() => onCompare(job)}
           title={t("job.compare")}
           type="button"
@@ -82,7 +103,7 @@ function JobRow({ job, showThumb, onRemove, onCompare }: RowProps) {
 
       {result && (
         <a
-          className="job-download"
+          className={styles.iconBtn}
           href={result.url}
           download={result.filename}
           title={t("job.download")}
@@ -92,7 +113,7 @@ function JobRow({ job, showThumb, onRemove, onCompare }: RowProps) {
       )}
 
       <button
-        className="job-remove"
+        className={`${styles.iconBtn} ${styles.removeBtn}`}
         onClick={() => onRemove(job.id)}
         title={t("job.remove")}
         type="button"
@@ -113,7 +134,7 @@ interface Props {
 export function JobList({ jobs, showThumb, onRemove, onCompare }: Props) {
   if (!jobs.length) return null;
   return (
-    <div className="job-list">
+    <div className={styles.list}>
       {jobs.map((job) => (
         <JobRow
           key={job.id}

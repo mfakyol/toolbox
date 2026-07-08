@@ -9,6 +9,8 @@ import { useBatchConverter } from "../hooks/useBatchConverter";
 import { convertImage } from "../api/convert";
 import { useI18n } from "../i18n";
 import type { ImageConvertOptions, ImageFormat, Job } from "../types";
+import { PageIntro, Columns, Panel, Alert } from "../components/ui";
+import styles from "./ToolPage.module.scss";
 
 export default function ImagePage() {
   const { t } = useI18n();
@@ -60,26 +62,26 @@ export default function ImagePage() {
 
   return (
     <>
-      <p className="page-intro">{t("image.intro")}</p>
+      <PageIntro>{t("image.intro")}</PageIntro>
 
-      <div className="layout">
-        <section className="panel">
+      <Columns>
+        <Panel>
           <BatchDropzone
             accept="image/*"
             hintTitle={t("image.dropTitle")}
             hintSub={t("image.dropSub")}
             onFiles={batch.addFiles}
           />
-          {batch.error && <div className="error">⚠️ {batch.error}</div>}
+          {batch.error && <Alert>⚠️ {batch.error}</Alert>}
           <JobList
             jobs={batch.jobs}
             showThumb
             onRemove={batch.removeJob}
             onCompare={setCompareJob}
           />
-        </section>
+        </Panel>
 
-        <section className="panel controls">
+        <Panel className={styles.controls}>
           <Controls
             format={format}
             quality={quality}
@@ -104,8 +106,8 @@ export default function ImagePage() {
             onRun={handleRun}
             onClear={batch.clear}
           />
-        </section>
-      </div>
+        </Panel>
+      </Columns>
 
       {compareJob && (
         <CompareModal job={compareJob} onClose={() => setCompareJob(null)} />

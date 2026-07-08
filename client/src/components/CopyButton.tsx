@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useI18n } from "../i18n";
+import { Button } from "./ui";
 
 export function CopyButton({ text }: { text: string }) {
   const { t } = useI18n();
@@ -13,8 +14,8 @@ export function CopyButton({ text }: { text: string }) {
   }
 
   return (
-    <button className="ghost-btn slim" onClick={copy} disabled={!text}>
+    <Button variant="ghost" size="sm" onClick={copy} disabled={!text}>
       {copied ? t("tools.copied") : t("tools.copy")}
-    </button>
+    </Button>
   );
 }

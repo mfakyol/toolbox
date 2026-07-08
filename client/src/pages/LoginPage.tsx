@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n";
-import { Button, Field, PageIntro, Alert } from "../components/ui";
+import { Button, Field, PageIntro, Alert, Checkbox } from "../components/ui";
 import styles from "./Auth.module.scss";
 
 export default function LoginPage() {
@@ -62,14 +62,9 @@ export default function LoginPage() {
           />
         </Field>
 
-        <label className="checkbox">
-          <input
-            type="checkbox"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-          />
+        <Checkbox checked={rememberMe} onChange={setRememberMe}>
           {t("auth.rememberMe")}
-        </label>
+        </Checkbox>
 
         {error && <Alert>{error}</Alert>}
 

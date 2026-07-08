@@ -1,0 +1,42 @@
+.dimsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  > span {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+}
+
+.dimsHint {
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  color: var(--accent-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease);
+
+  &:hover {
+    border-color: var(--accent);
+  }
+}
+
+.dimsRow {
+  display: flex;
+  gap: 12px;
+
+  label {
+    flex: 1;
+    display: flex;
+  }
+  input {
+    width: 100%;
+  }
+}

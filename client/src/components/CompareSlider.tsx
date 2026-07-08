@@ -1,4 +1,5 @@
 import { useRef, useState, type PointerEvent } from "react";
+import styles from "./CompareSlider.module.scss";
 
 interface Props {
   beforeUrl: string;
@@ -40,27 +41,27 @@ export function CompareSlider({
   return (
     <div
       ref={ref}
-      className="compare"
+      className={styles.compare}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={() => setDragging(false)}
     >
       {/* after (fully visible) */}
-      <img className="compare-img" src={afterUrl} alt={afterLabel} draggable={false} />
-      <span className="compare-tag right">{afterLabel}</span>
+      <img className={styles.img} src={afterUrl} alt={afterLabel} draggable={false} />
+      <span className={`${styles.tag} ${styles.right}`}>{afterLabel}</span>
 
       {/* before (visible up to pos% from the left) */}
       <div
-        className="compare-clip"
+        className={styles.clip}
         style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
       >
-        <img className="compare-img" src={beforeUrl} alt={beforeLabel} draggable={false} />
-        <span className="compare-tag left">{beforeLabel}</span>
+        <img className={styles.img} src={beforeUrl} alt={beforeLabel} draggable={false} />
+        <span className={`${styles.tag} ${styles.left}`}>{beforeLabel}</span>
       </div>
 
       {/* divider + handle */}
-      <div className="compare-divider" style={{ left: `${pos}%` }}>
-        <div className="compare-handle">⇔</div>
+      <div className={styles.divider} style={{ left: `${pos}%` }}>
+        <div className={styles.handle}>⇔</div>
       </div>
     </div>
   );

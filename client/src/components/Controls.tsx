@@ -1,5 +1,7 @@
 import { IMAGE_FORMATS, type ImageFormat } from "../types";
 import { useI18n } from "../i18n";
+import { Field, Chips, Checkbox } from "./ui";
+import styles from "./Controls.module.scss";
 
 interface Props {
   format: ImageFormat;
@@ -39,24 +41,16 @@ export function Controls(props: Props) {
 
   return (
     <>
-      <label className="field">
-        <span>{t("controls.format")}</span>
-        <div className="format-grid">
-          {IMAGE_FORMATS.map((f) => (
-            <button
-              key={f}
-              type="button"
-              className={`chip ${format === f ? "active" : ""}`}
-              onClick={() => onFormat(f)}
-            >
-              {f.toUpperCase()}
-            </button>
-          ))}
-        </div>
-      </label>
+      <Field label={t("controls.format")}>
+        <Chips
+          options={IMAGE_FORMATS}
+          value={format}
+          onChange={onFormat}
+          render={(f) => f.toUpperCase()}
+        />
+      </Field>
 
-      <label className="field">
-        <span>{t("controls.quality", { q: quality })}</span>
+      <Field label={t("controls.quality", { q: quality })}>
         <input
           type="range"
           min={1}
@@ -64,15 +58,15 @@ export function Controls(props: Props) {
           value={quality}
           onChange={(e) => onQuality(Number(e.target.value))}
         />
-      </label>
+      </Field>
 
-      <div className="field">
-        <div className="dims-header">
+      <div>
+        <div className={styles.dimsHeader}>
           <span>{t("controls.size")}</span>
           {originalDims && (
             <button
               type="button"
-              className="dims-hint"
+              className={styles.dimsHint}
               title={t("controls.fillTitle")}
               onClick={() => {
                 onWidth(String(originalDims.width));
@@ -87,7 +81,7 @@ export function Controls(props: Props) {
             </button>
           )}
         </div>
-        <div className="dims-row">
+        <div className={styles.dimsRow}>
           <label>
             <input
               type="number"
@@ -107,14 +101,9 @@ export function Controls(props: Props) {
         </div>
       </div>
 
-      <label className="checkbox">
-        <input
-          type="checkbox"
-          checked={keepMetadata}
-          onChange={(e) => onKeepMetadata(e.target.checked)}
-        />
-        <span>{t("controls.keepMeta")}</span>
-      </label>
+      <Checkbox checked={keepMetadata} onChange={onKeepMetadata}>
+        {t("controls.keepMeta")}
+      </Checkbox>
     </>
   );
 }

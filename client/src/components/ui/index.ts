@@ -9,3 +9,5 @@ export type { AlertTone } from "./Feedback";
 export { Dropzone, DropzoneHint, DropzonePreview } from "./Dropzone";
 export { Columns } from "./Columns";
 export { Chips } from "./Chips";
+export { Progress } from "./Progress";
+export { Checkbox } from "./Checkbox";
