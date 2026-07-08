@@ -100,7 +100,7 @@ export default function QrPage() {
 
       <div className="qr-layout">
         {/* Controls */}
-        <div className="panel">
+        <div className="panel qr-controls">
           <label className="field">
             <span>{t("qr.content")}</span>
             <textarea

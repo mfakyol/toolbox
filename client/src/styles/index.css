@@ -1668,8 +1668,14 @@ pre.code-area {
   border-color: var(--accent, #6366f1);
 }
 
+.qr-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .qr-hint {
-  margin: -6px 0 4px;
+  margin: -10px 0 0;
   font-size: 0.8rem;
   color: var(--muted);
   line-height: 1.4;
