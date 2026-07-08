@@ -26,6 +26,28 @@ export const translations: Record<Lang, Record<string, string>> = {
     "favicon.generating": "Üretiliyor…",
     "favicon.done": "✓ favicons.zip indirildi",
 
+    "nav.qr": "🔳 Karekod",
+    "qr.intro":
+      "Metin veya bağlantıyı karekoda çevir; PNG ya da SVG olarak indir.",
+    "qr.content": "İçerik (metin / URL)",
+    "qr.contentPlaceholder": "https://ornek.com veya herhangi bir metin",
+    "qr.ecc": "Hata düzeltme seviyesi",
+    "qr.eccL": "L — Düşük",
+    "qr.eccM": "M — Orta",
+    "qr.eccQ": "Q — Yüksek",
+    "qr.eccH": "H — En yüksek",
+    "qr.eccHint":
+      "Yüksek seviye, kod hasar görse veya üzerine logo eklense bile okunmasını sağlar; ama karekodu yoğunlaştırır.",
+    "qr.size": "Boyut",
+    "qr.margin": "Kenar boşluğu",
+    "qr.fg": "Ön plan rengi",
+    "qr.bg": "Arka plan rengi",
+    "qr.downloadPng": "⬇ PNG indir",
+    "qr.downloadSvg": "⬇ SVG indir",
+    "qr.empty": "Önizleme için bir içerik gir.",
+    "qr.tooLong":
+      "İçerik bu ayarlar için çok uzun. Metni kısalt ya da hata düzeltme seviyesini düşür.",
+
     "nav.tools": "🧰 Araçlar",
 
     "auth.login": "Giriş Yap",
@@ -280,6 +302,28 @@ export const translations: Record<Lang, Record<string, string>> = {
     "favicon.generating": "Wird erstellt…",
     "favicon.done": "✓ favicons.zip heruntergeladen",
 
+    "nav.qr": "🔳 QR-Code",
+    "qr.intro":
+      "Text oder Link in einen QR-Code umwandeln; als PNG oder SVG herunterladen.",
+    "qr.content": "Inhalt (Text / URL)",
+    "qr.contentPlaceholder": "https://beispiel.de oder beliebiger Text",
+    "qr.ecc": "Fehlerkorrektur-Stufe",
+    "qr.eccL": "L — Niedrig",
+    "qr.eccM": "M — Mittel",
+    "qr.eccQ": "Q — Hoch",
+    "qr.eccH": "H — Höchste",
+    "qr.eccHint":
+      "Höhere Stufen bleiben lesbar, wenn der Code beschädigt ist oder ein Logo einen Teil überdeckt — machen ihn aber dichter.",
+    "qr.size": "Größe",
+    "qr.margin": "Rand",
+    "qr.fg": "Vordergrundfarbe",
+    "qr.bg": "Hintergrundfarbe",
+    "qr.downloadPng": "⬇ PNG herunterladen",
+    "qr.downloadSvg": "⬇ SVG herunterladen",
+    "qr.empty": "Gib einen Inhalt für die Vorschau ein.",
+    "qr.tooLong":
+      "Inhalt ist für diese Einstellungen zu lang. Kürze den Text oder senke die Fehlerkorrektur-Stufe.",
+
     "nav.tools": "🧰 Werkzeuge",
 
     "auth.login": "Anmelden",
@@ -533,6 +577,27 @@ export const translations: Record<Lang, Record<string, string>> = {
     "favicon.generate": "Generate & download ZIP",
     "favicon.generating": "Generating…",
     "favicon.done": "✓ favicons.zip downloaded",
+
+    "nav.qr": "🔳 QR Code",
+    "qr.intro": "Turn text or a link into a QR code; download it as PNG or SVG.",
+    "qr.content": "Content (text / URL)",
+    "qr.contentPlaceholder": "https://example.com or any text",
+    "qr.ecc": "Error correction level",
+    "qr.eccL": "L — Low",
+    "qr.eccM": "M — Medium",
+    "qr.eccQ": "Q — Quartile",
+    "qr.eccH": "H — High",
+    "qr.eccHint":
+      "Higher levels stay scannable even if the code is damaged or a logo covers part of it — but they make it denser.",
+    "qr.size": "Size",
+    "qr.margin": "Margin",
+    "qr.fg": "Foreground color",
+    "qr.bg": "Background color",
+    "qr.downloadPng": "⬇ Download PNG",
+    "qr.downloadSvg": "⬇ Download SVG",
+    "qr.empty": "Enter some content to preview.",
+    "qr.tooLong":
+      "Content is too long for these settings. Shorten the text or lower the error-correction level.",
 
     "nav.tools": "🧰 Tools",
 

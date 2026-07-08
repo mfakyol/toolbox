@@ -51,6 +51,12 @@ export function Layout() {
             {t("nav.favicon")}
           </NavLink>
           <NavLink
+            to="/qr"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+          >
+            {t("nav.qr")}
+          </NavLink>
+          <NavLink
             to="/json"
             className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
           >

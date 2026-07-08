@@ -5,6 +5,7 @@ import { RequireAuth, RequireAdmin } from "./auth/guards";
 import ImagePage from "./pages/ImagePage";
 import FontPage from "./pages/FontPage";
 import FaviconPage from "./pages/FaviconPage";
+import QrPage from "./pages/QrPage";
 import ToolsPage from "./pages/ToolsPage";
 import LoginPage from "./pages/LoginPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
@@ -38,6 +39,7 @@ export default function App() {
             <Route index element={<ImagePage />} />
             <Route path="font" element={<FontPage />} />
             <Route path="favicon" element={<FaviconPage />} />
+            <Route path="qr" element={<QrPage />} />
             <Route path="tools" element={<ToolsPage />} />
             <Route path="secret" element={<SecretPage />} />
             <Route path="transfer" element={<TransferPage />} />
