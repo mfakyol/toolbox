@@ -1,0 +1,30 @@
+.intro {
+  text-align: center;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+.alert {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  border: 1px solid transparent;
+}
+
+.error {
+  background: var(--bad-soft);
+  border-color: var(--bad);
+  color: #fca5a5;
+}
+
+.success {
+  background: var(--good-soft);
+  border-color: var(--good);
+  color: #86efac;
+}
+
+.warn {
+  background: rgba(251, 191, 36, 0.12);
+  border-color: var(--warn);
+  color: var(--warn);
+}

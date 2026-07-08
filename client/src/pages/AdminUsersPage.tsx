@@ -3,6 +3,8 @@ import * as authApi from "../api/auth";
 import type { AuthUser, Role } from "../api/auth";
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n";
+import { Button, Field, Badge, Alert } from "../components/ui";
+import styles from "./AdminUsersPage.module.scss";
 
 export default function AdminUsersPage() {
   const { user: me } = useAuth();
@@ -61,47 +63,44 @@ export default function AdminUsersPage() {
 
   return (
     <div>
-      <h2>{t("admin.title")}</h2>
+      <h2 className={styles.title}>{t("admin.title")}</h2>
 
-      <form className="panel admin-form" onSubmit={onCreate}>
+      <form className={styles.form} onSubmit={onCreate}>
         <h3>{t("admin.newUser")}</h3>
-        <div className="admin-form-row">
-          <label className="field">
-            <span>{t("auth.email")}</span>
+        <div className={styles.formRow}>
+          <Field label={t("auth.email")}>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-          </label>
-          <label className="field">
-            <span>{t("auth.password")}</span>
+          </Field>
+          <Field label={t("auth.password")}>
             <input
               type="text"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-          </label>
-          <label className="field">
-            <span>{t("admin.role")}</span>
+          </Field>
+          <Field label={t("admin.role")}>
             <select value={role} onChange={(e) => setRole(e.target.value as Role)}>
               <option value="user">{t("admin.roleUser")}</option>
               <option value="admin">{t("admin.roleAdmin")}</option>
             </select>
-          </label>
+          </Field>
         </div>
 
-        {error && <div className="error">{error}</div>}
-        {notice && <div className="notice">{notice}</div>}
+        {error && <Alert>{error}</Alert>}
+        {notice && <Alert tone="success">{notice}</Alert>}
 
-        <button className="convert-btn" type="submit" disabled={busy}>
+        <Button type="submit" disabled={busy}>
           {busy ? t("admin.creating") : t("admin.create")}
-        </button>
+        </Button>
       </form>
 
-      <table className="admin-table">
+      <table className={styles.table}>
         <thead>
           <tr>
             <th>{t("admin.emailCol")}</th>
@@ -115,21 +114,23 @@ export default function AdminUsersPage() {
             <tr key={u.id}>
               <td>
                 {u.email}
-                {u.id === me?.id && <span className="muted"> {t("admin.you")}</span>}
+                {u.id === me?.id && (
+                  <span className={styles.muted}> {t("admin.you")}</span>
+                )}
               </td>
               <td>
-                <span className="badge">
+                <Badge tone={u.role === "admin" ? "accent" : "neutral"}>
                   {u.role === "admin" ? t("admin.roleAdmin") : t("admin.roleUser")}
-                </span>
+                </Badge>
               </td>
               <td>
                 {u.mustChangePassword ? t("admin.mustChange") : t("admin.active")}
               </td>
               <td>
                 {u.id !== me?.id && (
-                  <button className="ghost-btn" onClick={() => onDelete(u.id)}>
+                  <Button variant="ghost" size="sm" onClick={() => onDelete(u.id)}>
                     {t("admin.delete")}
-                  </button>
+                  </Button>
                 )}
               </td>
             </tr>

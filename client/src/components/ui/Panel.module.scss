@@ -1,0 +1,13 @@
+@use "../../styles/mixins" as *;
+
+.panel {
+  @include panel;
+}
+
+.inset {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: none;
+}

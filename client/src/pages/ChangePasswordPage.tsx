@@ -2,6 +2,8 @@ import { useState, type FormEvent } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n";
+import { Button, Field, PageIntro, Alert } from "../components/ui";
+import styles from "./Auth.module.scss";
 
 // Forced first-login password change. Reused as a normal change-password form
 // too, but the flow lands here automatically while mustChangePassword is set.
@@ -46,13 +48,12 @@ export default function ChangePasswordPage() {
   }
 
   return (
-    <div className="auth-wrap">
-      <form className="panel auth-card" onSubmit={onSubmit}>
-        <h2 className="auth-title">{t("auth.changeTitle")}</h2>
-        <p className="page-intro">{t("auth.changeSub")}</p>
+    <div className={styles.wrap}>
+      <form className={styles.card} onSubmit={onSubmit}>
+        <h2 className={styles.title}>{t("auth.changeTitle")}</h2>
+        <PageIntro>{t("auth.changeSub")}</PageIntro>
 
-        <label className="field">
-          <span>{t("auth.currentPassword")}</span>
+        <Field label={t("auth.currentPassword")}>
           <input
             type="password"
             autoComplete="current-password"
@@ -60,10 +61,9 @@ export default function ChangePasswordPage() {
             value={current}
             onChange={(e) => setCurrent(e.target.value)}
           />
-        </label>
+        </Field>
 
-        <label className="field">
-          <span>{t("auth.newPassword")}</span>
+        <Field label={t("auth.newPassword")}>
           <input
             type="password"
             autoComplete="new-password"
@@ -71,10 +71,9 @@ export default function ChangePasswordPage() {
             value={next}
             onChange={(e) => setNext(e.target.value)}
           />
-        </label>
+        </Field>
 
-        <label className="field">
-          <span>{t("auth.confirmPassword")}</span>
+        <Field label={t("auth.confirmPassword")}>
           <input
             type="password"
             autoComplete="new-password"
@@ -82,13 +81,13 @@ export default function ChangePasswordPage() {
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
           />
-        </label>
+        </Field>
 
-        {error && <div className="error">{error}</div>}
+        {error && <Alert>{error}</Alert>}
 
-        <button className="convert-btn" type="submit" disabled={busy}>
+        <Button type="submit" block disabled={busy}>
           {busy ? t("auth.saving") : t("auth.save")}
-        </button>
+        </Button>
       </form>
     </div>
   );

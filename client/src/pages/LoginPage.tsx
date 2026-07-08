@@ -2,6 +2,8 @@ import { useState, type FormEvent } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n";
+import { Button, Field, PageIntro, Alert } from "../components/ui";
+import styles from "./Auth.module.scss";
 
 export default function LoginPage() {
   const { user, loading, authRequired, login } = useAuth();
@@ -35,13 +37,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="auth-wrap">
-      <form className="panel auth-card" onSubmit={onSubmit}>
-        <h2 className="auth-title">{t("auth.loginTitle")}</h2>
-        <p className="page-intro">{t("auth.loginSub")}</p>
+    <div className={styles.wrap}>
+      <form className={styles.card} onSubmit={onSubmit}>
+        <h2 className={styles.title}>{t("auth.loginTitle")}</h2>
+        <PageIntro>{t("auth.loginSub")}</PageIntro>
 
-        <label className="field">
-          <span>{t("auth.email")}</span>
+        <Field label={t("auth.email")}>
           <input
             type="email"
             autoComplete="username"
@@ -49,10 +50,9 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-        </label>
+        </Field>
 
-        <label className="field">
-          <span>{t("auth.password")}</span>
+        <Field label={t("auth.password")}>
           <input
             type="password"
             autoComplete="current-password"
@@ -60,7 +60,7 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-        </label>
+        </Field>
 
         <label className="checkbox">
           <input
@@ -71,11 +71,11 @@ export default function LoginPage() {
           {t("auth.rememberMe")}
         </label>
 
-        {error && <div className="error">{error}</div>}
+        {error && <Alert>{error}</Alert>}
 
-        <button className="convert-btn" type="submit" disabled={busy}>
+        <Button type="submit" block disabled={busy}>
           {busy ? t("auth.loggingIn") : t("auth.login")}
-        </button>
+        </Button>
       </form>
     </div>
   );
