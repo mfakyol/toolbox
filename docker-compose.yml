@@ -1,10 +1,32 @@
 services:
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    expose:
+      - "27017"
+
   server:
     build: ./server
+    depends_on:
+      - mongo
     environment:
       - PORT=6000
+      - NODE_ENV=production
       - CORS_ORIGIN=*
       - MAX_FILE_SIZE=26214400
+      - MONGO_URI=mongodb://mongo:27017/toolbox
+      # Served over plain HTTP here; set true once behind HTTPS.
+      - COOKIE_SECURE=false
+      - SESSION_SECRET=${SESSION_SECRET:-change-me-in-production}
+      - SECRET_ENCRYPTION_KEY=${SECRET_ENCRYPTION_KEY:-change-me-secret-encryption-key}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@toolbox.local}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin1234}
+      - UPLOAD_DIR=/data/uploads
+      - MAX_TRANSFER_SIZE=${MAX_TRANSFER_SIZE:-2147483648}
+    volumes:
+      - transfer-data:/data/uploads
     restart: unless-stopped
     expose:
       - "6000"
@@ -16,3 +38,7 @@ services:
     ports:
       - "8080:80"
     restart: unless-stopped
+
+volumes:
+  mongo-data:
+  transfer-data:

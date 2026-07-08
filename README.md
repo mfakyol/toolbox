@@ -34,6 +34,8 @@ A single multilingual (EN / DE / TR) SPA bundling **5 tools**:
 | ⭐ **Favicon Generator** | `/favicon` | From one image: `favicon.ico` + all PNG sizes + `site.webmanifest` + `<head>` snippet (ZIP) |
 | 🧬 **JSON → TypeScript** | `/json` | Generate `interface`/`type` from JSON — syntax-highlighted editor |
 | 🧰 **Dev Tools** | `/tools` | Base64 · URL encode/decode · JWT decoder · Hash (SHA) · UUID generator |
+| 🔑 **One-Time Secret** | `/secret` | Share an encrypted secret via a link that self-destructs after a single view |
+| 📦 **File Transfer** | `/transfer` | WeTransfer-style: upload files, share one link, download until it expires |
 
 ### Highlights
 - ⚡ **Multi-file & parallel processing** — batch upload via drag & drop; up to **10** concurrent conversions (queue-managed pool), the rest wait in line
@@ -100,11 +102,35 @@ npm run dev        # http://localhost:6001
 
 The frontend proxies `/api` requests to the backend (6000) via Vite.
 
-### 🐳 Docker (one command)
+### 🐳 Docker (local, one command)
 ```bash
 docker compose up --build     # http://localhost:8080
 ```
-nginx serves the frontend and proxies `/api` to the backend service; the backend is not exposed publicly.
+nginx serves the frontend and proxies `/api` to the backend service; the backend is not exposed publicly. (This local compose runs its own MongoDB.)
+
+### 🚀 Production deploy (Linux server + host nginx)
+
+Everything runs in containers; TLS is terminated by the **host's nginx**. The app is published on `127.0.0.1:8080` only.
+
+```bash
+# 1. Configure — copy the template and fill in the values
+cp .env.example .env
+#    generate secrets:  openssl rand -hex 32
+$EDITOR .env               # DOMAIN, SESSION_SECRET, SECRET_ENCRYPTION_KEY, ADMIN_PASSWORD …
+
+# 2. Bring up the stack (client + server + mongo)
+docker compose -f docker-compose.prod.yml up -d --build
+
+# 3. Host nginx: point your server block at 127.0.0.1:8080 and get a cert
+sudo cp deploy/nginx-host.conf.example /etc/nginx/sites-available/tools.fatihakyol.com
+sudo ln -s /etc/nginx/sites-available/tools.fatihakyol.com /etc/nginx/sites-enabled/
+sudo certbot --nginx -d tools.fatihakyol.com
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+**Prerequisites:** DNS `A`/`AAAA` for the domain → this server; ports 80/443 open. The compose file **requires** `DOMAIN`, `SESSION_SECRET`, `SECRET_ENCRYPTION_KEY`, and `ADMIN_PASSWORD` in `.env` (it fails fast if any is missing). `.env` is git-ignored — never commit it. Cookies are `Secure` in this setup; the `X-Forwarded-Proto` header is propagated host nginx → container nginx → backend so logins work over HTTPS. Uploads and the transfer volume persist in named Docker volumes; `client_max_body_size` is raised on both nginx layers for large transfers.
+
+Request flow: **browser → host nginx (TLS) → `127.0.0.1:8080` container nginx → `/api` to server / static SPA otherwise.**
 
 ---
 
@@ -139,6 +165,72 @@ Response: `favicons.zip` (favicon.ico + PNG sizes + manifest + head snippet).
 ### `GET /api/health`
 `{ status, imageFormats, fontFormats }`
 
+### Auth endpoints
+| Method & path | Auth | Description |
+|---------------|------|-------------|
+| `POST /api/auth/login` | – | `{ email, password, rememberMe }`. `rememberMe` → persistent 1-year cookie; otherwise a browser-session cookie |
+| `POST /api/auth/logout` | session | Destroys the session |
+| `GET /api/auth/me` | – | `{ user }` (or `null`) |
+| `POST /api/auth/change-password` | session | `{ currentPassword, newPassword }`; clears the first-login flag |
+| `GET /api/admin/users` | admin | List accounts |
+| `POST /api/admin/users` | admin | Create account `{ email, password, role }` |
+| `DELETE /api/admin/users/:id` | admin | Remove account |
+
+### One-time secret endpoints
+| Method & path | Auth | Description |
+|---------------|------|-------------|
+| `POST /api/secrets` | session | Create `{ content, passphrase?, ttlSeconds, requireLogin }` → returns a share token |
+| `GET /api/secrets` | session | Current user's secrets (metadata only, **never** content) |
+| `GET /api/secrets/:token/meta` | – | View-page metadata (status, expiry, flags) — no content |
+| `POST /api/secrets/:token/reveal` | –* | One-time reveal; returns content **once**, then wipes it. *`requireLogin` secrets need a session |
+
+### File-transfer endpoints
+| Method & path | Auth | Description |
+|---------------|------|-------------|
+| `POST /api/transfers` | session | Multipart upload `files[]` + `{ message?, passphrase?, ttlSeconds, requireLogin }` |
+| `GET /api/transfers` | session | Current user's transfers (metadata only) |
+| `DELETE /api/transfers/:id` | session | Owner deletes a transfer and its files |
+| `GET /api/transfers/:token/meta` | – | Download-page info (file list, sizes, flags) |
+| `POST /api/transfers/:token/verify` | –* | Checks login/passphrase without downloading |
+| `GET /api/transfers/:token/download` | –* | Streams the file, or a zip of all files. *`requireLogin`/passphrase enforced |
+
+---
+
+## 📦 File Transfer
+
+WeTransfer-style sharing. Upload one or more files (stored on disk under `UPLOAD_DIR`) and get a single shareable link. The link is **downloadable until it expires** (selectable TTL, default 7 days), download count is tracked, and a single file streams directly while multiple files stream as an on-the-fly **zip** (`archiver`). Options mirror the secret feature: optional **passphrase** (bcrypt-gated) and a **"login required to download"** checkbox. Expired transfers are swept and their files wiped from disk by a background job; owners can also delete transfers manually from their history. Behind nginx, `client_max_body_size` and streaming proxy buffers are configured for large files.
+
+---
+
+## 🔑 One-Time Secret
+
+Paste text → it's stored **encrypted** (AES-256-GCM, server-side key + optional passphrase) and you get a shareable link. Opening the link once reveals the content and **permanently deletes it** from the database; only metadata survives so the creator's history shows *unopened / viewed / expired* plus timestamps — the content is never shown again. Options: selectable TTL (1h/1d/7d/30d, default 7d), optional passphrase, and a "login required to open" checkbox. Expired-but-unopened secrets are swept and wiped by a background job.
+
+---
+
+## 🔐 Authentication
+
+Session-based auth (Passport local strategy) backed by MongoDB via `connect-mongo`. **There is no public registration** — an admin creates accounts, and each new account **must change its password on first login**. Roles: `admin` and `user` (more admin roles can be added later). All tool routes require a logged-in user.
+
+The **first admin** is seeded on startup from env vars if no admin exists yet.
+
+### Env vars (server)
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MONGO_URI` | `mongodb://localhost:27017/toolbox` | MongoDB connection string |
+| `SESSION_SECRET` | `change-me-in-production` | Session signing secret — **set this in production** |
+| `SECRET_ENCRYPTION_KEY` | `change-me-secret-encryption-key` | AES key for one-time secrets — **set this in production** |
+| `UPLOAD_DIR` | `uploads` | Directory where transfer files are stored |
+| `MAX_TRANSFER_SIZE` | `2147483648` | Max total upload size per transfer in bytes (2 GB) |
+| `MAX_TRANSFER_FILES` | `20` | Max number of files per transfer |
+| `ADMIN_EMAIL` | `admin@toolbox.local` | Seeded first-admin email |
+| `ADMIN_PASSWORD` | `admin1234` | Seeded first-admin password (change on first login) |
+| `REMEMBER_ME_MAX_AGE` | `31536000000` | "Remember me" cookie lifetime in ms (1 year) |
+| `COOKIE_SECURE` | `true` in production | Set `false` when serving over plain HTTP |
+
+> **Local dev:** run MongoDB (e.g. `docker run -p 27017:27017 mongo:7`), then `npm run dev` in `server`. Docker Compose brings up Mongo automatically.
+
 ---
 
 ## 🧪 Testing
@@ -156,7 +248,7 @@ cd client && npm test    # vitest — pool, jsonToTs, devtools, format
 ## 🛠️ Tech stack
 
 **Frontend:** React 18 · TypeScript · Vite · React Router · CodeMirror · JSZip
-**Backend:** Node.js 20 · Express · Sharp · fontverter · png-to-ico · Multer
+**Backend:** Node.js 20 · Express · Sharp · fontverter · png-to-ico · Multer · archiver · MongoDB · Mongoose · Passport · connect-mongo
 **Infra:** Docker · nginx · Vitest · node:test
 
 ---

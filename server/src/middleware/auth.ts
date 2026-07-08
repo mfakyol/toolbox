@@ -1,0 +1,28 @@
+import type { RequestHandler } from "express";
+import { AppError } from "../utils/AppError.js";
+
+// Requires an authenticated session.
+export const requireAuth: RequestHandler = (req, _res, next) => {
+  if (!req.isAuthenticated?.() || !req.user) {
+    return next(new AppError("Giriş yapmanız gerekiyor.", 401));
+  }
+  next();
+};
+
+// Requires the "admin" role. Assumes requireAuth ran first.
+export const requireAdmin: RequestHandler = (req, _res, next) => {
+  if (req.user?.role !== "admin") {
+    return next(new AppError("Bu işlem için yetkiniz yok.", 403));
+  }
+  next();
+};
+
+// Blocks access while the user still has to change their initial password.
+// Applied to the tool routes so a fresh account is forced through the
+// change-password flow before it can use anything.
+export const requirePasswordChanged: RequestHandler = (req, _res, next) => {
+  if (req.user?.mustChangePassword) {
+    return next(new AppError("Devam etmeden önce şifrenizi değiştirin.", 403));
+  }
+  next();
+};

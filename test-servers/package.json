@@ -1,0 +1,17 @@
+{
+  "name": "toolbox-test-servers",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local echo servers (WebSocket / Socket.IO / SignalR-compatible) for the API Playground.",
+  "scripts": {
+    "start": "node index.js",
+    "ws": "node ws-server.js",
+    "socketio": "node socketio-server.js",
+    "signalr": "node signalr-server.js"
+  },
+  "dependencies": {
+    "socket.io": "^4.8.1",
+    "ws": "^8.18.0"
+  }
+}

@@ -1,0 +1,54 @@
+# Production stack — containerized app behind your host's nginx.
+#
+#   1. cp .env.example .env   &&   fill in the values
+#   2. docker compose -f docker-compose.prod.yml up -d --build
+#
+# The app is published on 127.0.0.1:8080 only. Your host nginx terminates TLS
+# for the domain and reverse-proxies to that port (see deploy/nginx-host.conf.example).
+
+services:
+  client:
+    build: ./client
+    depends_on:
+      - server
+    # Bind to localhost so only the host nginx can reach it (not public).
+    ports:
+      - "127.0.0.1:8080:80"
+    restart: unless-stopped
+
+  server:
+    build: ./server
+    depends_on:
+      - mongo
+    environment:
+      - PORT=6000
+      - NODE_ENV=production
+      # External traffic is HTTPS (host nginx). Proto is propagated all the way
+      # down, so issue Secure cookies.
+      - COOKIE_SECURE=true
+      - CORS_ORIGIN=https://${DOMAIN:?set DOMAIN in .env}
+      - MONGO_URI=mongodb://mongo:27017/toolbox
+      - SESSION_SECRET=${SESSION_SECRET:?set SESSION_SECRET in .env}
+      - SECRET_ENCRYPTION_KEY=${SECRET_ENCRYPTION_KEY:?set SECRET_ENCRYPTION_KEY in .env}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@fatihakyol.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
+      - UPLOAD_DIR=/data/uploads
+      - MAX_TRANSFER_SIZE=${MAX_TRANSFER_SIZE:-2147483648}
+      - MAX_TRANSFER_FILES=${MAX_TRANSFER_FILES:-20}
+    volumes:
+      - transfer-data:/data/uploads
+    expose:
+      - "6000"
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongo-data:/data/db
+    expose:
+      - "27017"
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+  transfer-data:

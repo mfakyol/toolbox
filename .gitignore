@@ -4,3 +4,7 @@ server/uploads/*
 !server/uploads/.gitkeep
 *.log
 .DS_Store
+
+# Secrets — never commit the real env file
+.env
+
