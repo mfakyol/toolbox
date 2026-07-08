@@ -1,0 +1,65 @@
+// Design tokens. Exposed as CSS custom properties (themeable at runtime) and
+// mirrored as Sass variables/mixins-friendly values for use inside modules.
+// Refined dark theme: deeper background, calmer surfaces, clearer borders,
+// a proper elevation + radius + spacing scale.
+
+:root {
+  // ---- Surfaces ----
+  --bg: #0a0c11;
+  --bg-elevated: #0e1116;
+  --panel: #141821;
+  --panel-2: #1a1f2a;
+  --panel-3: #202634;
+
+  // ---- Lines ----
+  --border: #232937;
+  --border-strong: #313949;
+
+  // ---- Text ----
+  --text: #eef1f6;
+  --text-2: #c3cad6;
+  --muted: #8a93a4;
+  --faint: #5b6373;
+
+  // ---- Brand / accent ----
+  --accent: #6366f1;
+  --accent-2: #8b5cf6;
+  --accent-hover: #7c7ff4;
+  --accent-soft: rgba(99, 102, 241, 0.14);
+  --accent-text: #b9bffb;
+  --gradient: linear-gradient(135deg, var(--accent), var(--accent-2));
+
+  // ---- Status ----
+  --good: #34d399;
+  --good-soft: rgba(52, 211, 153, 0.12);
+  --bad: #f87171;
+  --bad-soft: rgba(248, 113, 113, 0.12);
+  --warn: #fbbf24;
+
+  // ---- Radius ----
+  --radius-sm: 9px;
+  --radius: 13px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  // ---- Elevation ----
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 18px 50px -16px rgba(0, 0, 0, 0.65);
+  --ring: 0 0 0 3px rgba(99, 102, 241, 0.35);
+
+  // ---- Typography ----
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono",
+    Menlo, Consolas, monospace;
+
+  // ---- Motion ----
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur: 0.16s;
+}
+
+// Sass-side mirrors for use in module math / breakpoints.
+$bp-sm: 560px;
+$bp-md: 780px;
+$bp-lg: 1000px;

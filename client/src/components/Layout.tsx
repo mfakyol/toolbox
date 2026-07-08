@@ -2,6 +2,10 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useI18n } from "../i18n";
 import { useAuth } from "../auth/AuthContext";
 import { LangSwitcher } from "./LangSwitcher";
+import styles from "./Layout.module.scss";
+
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  `${styles.navLink} ${isActive ? styles.active : ""}`;
 
 export function Layout() {
   const { t } = useI18n();
@@ -14,83 +18,49 @@ export function Layout() {
   }
 
   return (
-    <div className="page">
-      <header className="header">
-        <div className="header-top">
-          <h1>{t("app.title")}</h1>
-          <div className="header-actions">
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <div className={styles.headerTop}>
+          <h1 className={styles.title}>{t("app.title")}</h1>
+          <div className={styles.actions}>
             <LangSwitcher />
             {authRequired && user && (
               <>
-                <span className="user-email">{user.email}</span>
-                <button className="ghost-btn" onClick={onLogout}>
+                <span className={styles.userEmail}>{user.email}</span>
+                <button className={styles.logoutBtn} onClick={onLogout}>
                   {t("auth.logout")}
                 </button>
               </>
             )}
           </div>
         </div>
-        <nav className="nav">
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-          >
+        <nav className={styles.nav}>
+          <NavLink to="/" end className={navLinkClass}>
             {t("nav.image")}
           </NavLink>
-          <NavLink
-            to="/font"
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-          >
+          <NavLink to="/font" className={navLinkClass}>
             {t("nav.font")}
           </NavLink>
-          <NavLink
-            to="/favicon"
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-          >
+          <NavLink to="/favicon" className={navLinkClass}>
             {t("nav.favicon")}
           </NavLink>
-          <NavLink
-            to="/qr"
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-          >
-            {t("nav.qr")}
-          </NavLink>
-          <NavLink
-            to="/json"
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-          >
+          <NavLink to="/json" className={navLinkClass}>
             {t("nav.json")}
           </NavLink>
-          <NavLink
-            to="/tools"
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-          >
+          <NavLink to="/tools" className={navLinkClass}>
             {t("nav.tools")}
           </NavLink>
-          <NavLink
-            to="/secret"
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-          >
+          <NavLink to="/secret" className={navLinkClass}>
             {t("nav.secret")}
           </NavLink>
-          <NavLink
-            to="/transfer"
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-          >
+          <NavLink to="/transfer" className={navLinkClass}>
             {t("nav.transfer")}
           </NavLink>
-          <NavLink
-            to="/playground"
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-          >
+          <NavLink to="/playground" className={navLinkClass}>
             {t("nav.play")}
           </NavLink>
           {authRequired && user?.role === "admin" && (
-            <NavLink
-              to="/admin/users"
-              className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-            >
+            <NavLink to="/admin/users" className={navLinkClass}>
               {t("auth.admin")}
             </NavLink>
           )}

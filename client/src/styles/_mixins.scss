@@ -1,0 +1,93 @@
+// Reusable style building blocks for CSS-module components.
+// Usage in a module:  @use "../styles/mixins" as *;  .card { @include panel; }
+
+@mixin panel($pad: 20px) {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: $pad;
+  box-shadow: var(--shadow);
+}
+
+@mixin focus-ring {
+  outline: none;
+  box-shadow: var(--ring);
+  border-color: var(--accent);
+}
+
+@mixin input {
+  width: 100%;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 0.9rem;
+  transition: border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+
+  &::placeholder {
+    color: var(--faint);
+  }
+  &:hover {
+    border-color: var(--border-strong);
+  }
+  &:focus,
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+@mixin btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease),
+    border-color var(--dur) var(--ease), transform var(--dur) var(--ease),
+    opacity var(--dur) var(--ease);
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+@mixin btn-primary {
+  @include btn-base;
+  padding: 12px 18px;
+  color: #fff;
+  background: var(--gradient);
+  box-shadow: 0 6px 16px -8px var(--accent);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px -10px var(--accent);
+  }
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+@mixin btn-ghost {
+  @include btn-base;
+  padding: 10px 16px;
+  color: var(--text-2);
+  background: var(--panel-2);
+  border-color: var(--border);
+
+  &:hover:not(:disabled) {
+    color: var(--text);
+    border-color: var(--border-strong);
+    background: var(--panel-3);
+  }
+}
