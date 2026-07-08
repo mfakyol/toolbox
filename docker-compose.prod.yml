@@ -1,7 +1,14 @@
 # Production stack — containerized app behind your host's nginx.
 #
-#   1. cp .env.example .env   &&   fill in the values
-#   2. docker compose -f docker-compose.prod.yml up -d --build
+# Uses the SHARED MongoDB: one mongo server ("shared-mongo") on the external
+# Docker network "shared" is reused by every project on this host. This app
+# only runs its own client + server; the database lives outside the stack.
+#
+#   1. cp .env.example .env   &&   fill in the values (incl. MONGO_URI)
+#   2. Make sure the shared pieces exist once on the host:
+#        docker network create shared          # if not already created
+#        # and the shared-mongo container is running (see /opt/mongodb)
+#   3. docker compose -f docker-compose.prod.yml up -d --build
 #
 # The app is published on 127.0.0.1:8080 only. Your host nginx terminates TLS
 # for the domain and reverse-proxies to that port (see deploy/nginx-host.conf.example).
@@ -18,8 +25,6 @@ services:
 
   server:
     build: ./server
-    depends_on:
-      - mongo
     environment:
       - PORT=6000
       - NODE_ENV=production
@@ -27,7 +32,9 @@ services:
       # down, so issue Secure cookies.
       - COOKIE_SECURE=true
       - CORS_ORIGIN=https://${DOMAIN:?set DOMAIN in .env}
-      - MONGO_URI=mongodb://mongo:27017/toolbox
+      # Shared MongoDB — the full URI (with this project's DB user + password)
+      # lives in .env and is never committed. Host is the shared-mongo container.
+      - MONGO_URI=${MONGO_URI:?set MONGO_URI in .env}
       - SESSION_SECRET=${SESSION_SECRET:?set SESSION_SECRET in .env}
       - SECRET_ENCRYPTION_KEY=${SECRET_ENCRYPTION_KEY:?set SECRET_ENCRYPTION_KEY in .env}
       - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@fatihakyol.com}
@@ -37,18 +44,18 @@ services:
       - MAX_TRANSFER_FILES=${MAX_TRANSFER_FILES:-20}
     volumes:
       - transfer-data:/data/uploads
+    networks:
+      # "default" so the client can reach the server; "shared" for the database.
+      - default
+      - shared
     expose:
       - "6000"
     restart: unless-stopped
 
-  mongo:
-    image: mongo:7
-    volumes:
-      - mongo-data:/data/db
-    expose:
-      - "27017"
-    restart: unless-stopped
+networks:
+  # Created once on the host: docker network create shared
+  shared:
+    external: true
 
 volumes:
-  mongo-data:
   transfer-data:
