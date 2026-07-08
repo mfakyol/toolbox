@@ -1,0 +1,119 @@
+@use "../styles/mixins" as *;
+
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.form {
+  @include panel;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.linkRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  input {
+    flex: 1;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+}
+
+.warn {
+  color: var(--warn);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.filelist {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+
+.filelistHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.9rem;
+  }
+}
+
+.fileName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.message {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 12px;
+}
+
+.history {
+  margin-top: 32px;
+}
+
+.empty {
+  color: var(--muted);
+}
+
+.table {
+  @include data-table;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.rowActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+}

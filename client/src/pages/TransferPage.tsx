@@ -1,9 +1,23 @@
-import { useEffect, useRef, useState, type FormEvent, type DragEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import * as transferApi from "../api/transfer";
 import type { TransferSummary } from "../api/transfer";
 import { CopyButton } from "../components/CopyButton";
 import { formatBytes } from "../utils/format";
 import { useI18n } from "../i18n";
+import {
+  Panel,
+  Field,
+  Button,
+  Badge,
+  Alert,
+  Checkbox,
+  Progress,
+  PageIntro,
+  Dropzone,
+  DropzoneHint,
+  type BadgeTone,
+} from "../components/ui";
+import styles from "./TransferPage.module.scss";
 
 const TTL_KEYS: Record<number, string> = {
   3600: "secret.ttl1h",
@@ -14,14 +28,12 @@ const TTL_KEYS: Record<number, string> = {
 
 export default function TransferPage() {
   const { t, lang } = useI18n();
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const [files, setFiles] = useState<File[]>([]);
   const [message, setMessage] = useState("");
   const [passphrase, setPassphrase] = useState("");
   const [ttl, setTtl] = useState(604800);
   const [requireLogin, setRequireLogin] = useState(false);
-  const [dragging, setDragging] = useState(false);
 
   const [progress, setProgress] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -48,15 +60,8 @@ export default function TransferPage() {
     refresh();
   }, []);
 
-  function addFiles(list: FileList | null) {
-    if (!list) return;
+  function addFiles(list: FileList | File[]) {
     setFiles((prev) => [...prev, ...Array.from(list)]);
-  }
-
-  function onDrop(e: DragEvent) {
-    e.preventDefault();
-    setDragging(false);
-    addFiles(e.dataTransfer.files);
   }
 
   async function onSubmit(e: FormEvent) {
@@ -98,97 +103,78 @@ export default function TransferPage() {
     }
   }
 
+  const statusTone = (active: boolean): BadgeTone => (active ? "accent" : "neutral");
+
   return (
     <div>
-      <p className="page-intro">{t("transfer.intro")}</p>
+      <PageIntro>{t("transfer.intro")}</PageIntro>
 
       {created ? (
-        <div className="panel secret-result">
+        <Panel className={styles.result}>
           <h3>{t("transfer.linkTitle")}</h3>
-          <div className="secret-link-row">
+          <div className={styles.linkRow}>
             <input readOnly value={transferApi.transferShareUrl(created.token)} />
             <CopyButton text={transferApi.transferShareUrl(created.token)} />
           </div>
-          <p className="secret-warn">{t("transfer.linkNote")}</p>
-          <div className="secret-badges">
-            {created.hasPassphrase && <span className="chip">🔒</span>}
-            {created.requireLogin && <span className="chip">👤</span>}
-            <span className="chip">
+          <p className={styles.warn}>{t("transfer.linkNote")}</p>
+          <div className={styles.badges}>
+            {created.hasPassphrase && <Badge>🔒</Badge>}
+            {created.requireLogin && <Badge>👤</Badge>}
+            <Badge>
               {created.files.length} {t("transfer.files")} ·{" "}
               {formatBytes(created.totalSize)}
-            </span>
-            <span className="chip">
+            </Badge>
+            <Badge tone="accent">
               {t("transfer.expires")}: {fmt(created.expiresAt)}
-            </span>
+            </Badge>
           </div>
-          <button className="convert-btn" onClick={() => setCreated(null)}>
-            {t("transfer.new")}
-          </button>
-        </div>
+          <div>
+            <Button onClick={() => setCreated(null)}>{t("transfer.new")}</Button>
+          </div>
+        </Panel>
       ) : (
-        <form className="panel secret-form" onSubmit={onSubmit}>
-          <div
-            className={`dropzone ${dragging ? "dragging" : ""}`}
-            onClick={() => inputRef.current?.click()}
-            onDragOver={(e) => {
-              e.preventDefault();
-              setDragging(true);
-            }}
-            onDragLeave={() => setDragging(false)}
-            onDrop={onDrop}
-          >
-            <div className="dropzone-hint">
-              <strong>{t("transfer.drop")}</strong>
-              <span>{t("transfer.dropHint")}</span>
-            </div>
-            <input
-              ref={inputRef}
-              type="file"
-              multiple
-              hidden
-              onChange={(e) => addFiles(e.target.files)}
+        <form className={styles.form} onSubmit={onSubmit}>
+          <Dropzone onFiles={addFiles} multiple>
+            <DropzoneHint
+              icon="📁"
+              title={t("transfer.drop")}
+              sub={t("transfer.dropHint")}
             />
-          </div>
+          </Dropzone>
 
           {files.length > 0 && (
-            <div className="transfer-filelist">
-              <div className="transfer-filelist-head">
+            <div className={styles.filelist}>
+              <div className={styles.filelistHead}>
                 <span>
                   {t("transfer.selected", { n: files.length })} ·{" "}
                   {formatBytes(totalSize)}
                 </span>
-                <button
-                  type="button"
-                  className="ghost-btn slim"
-                  onClick={() => setFiles([])}
-                >
+                <Button variant="ghost" size="sm" onClick={() => setFiles([])}>
                   {t("transfer.clear")}
-                </button>
+                </Button>
               </div>
-              <ul>
+              <ul className={styles.list}>
                 {files.map((f, i) => (
                   <li key={`${f.name}-${i}`}>
-                    <span className="transfer-file-name">{f.name}</span>
-                    <span className="muted">{formatBytes(f.size)}</span>
+                    <span className={styles.fileName}>{f.name}</span>
+                    <span className={styles.muted}>{formatBytes(f.size)}</span>
                   </li>
                 ))}
               </ul>
             </div>
           )}
 
-          <label className="field">
-            <span>{t("transfer.message")}</span>
+          <Field label={t("transfer.message")}>
             <textarea
-              className="secret-textarea transfer-message"
+              className={styles.message}
               placeholder={t("transfer.messagePlaceholder")}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-          </label>
+          </Field>
 
-          <div className="secret-form-row">
-            <label className="field">
-              <span>{t("secret.ttl")}</span>
+          <div className={styles.formRow}>
+            <Field label={t("secret.ttl")}>
               <select value={ttl} onChange={(e) => setTtl(Number(e.target.value))}>
                 {Object.entries(TTL_KEYS).map(([sec, key]) => (
                   <option key={sec} value={sec}>
@@ -196,56 +182,39 @@ export default function TransferPage() {
                   </option>
                 ))}
               </select>
-            </label>
-            <label className="field">
-              <span>{t("secret.passphrase")}</span>
+            </Field>
+            <Field label={t("secret.passphrase")}>
               <input
                 type="text"
                 placeholder={t("secret.passphrasePlaceholder")}
                 value={passphrase}
                 onChange={(e) => setPassphrase(e.target.value)}
               />
-            </label>
+            </Field>
           </div>
 
-          <label className="checkbox">
-            <input
-              type="checkbox"
-              checked={requireLogin}
-              onChange={(e) => setRequireLogin(e.target.checked)}
-            />
+          <Checkbox checked={requireLogin} onChange={setRequireLogin}>
             {t("secret.requireLogin")}
-          </label>
+          </Checkbox>
 
-          {busy && (
-            <div className="transfer-progress">
-              <div
-                className="transfer-progress-fill"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          )}
+          {busy && <Progress value={progress} />}
 
-          {error && <div className="error">{error}</div>}
+          {error && <Alert>{error}</Alert>}
 
-          <button
-            className="convert-btn"
-            type="submit"
-            disabled={busy || files.length === 0}
-          >
+          <Button type="submit" disabled={busy || files.length === 0}>
             {busy
               ? t("transfer.uploading", { p: progress })
               : t("transfer.upload")}
-          </button>
+          </Button>
         </form>
       )}
 
-      <div className="secret-history">
+      <div className={styles.history}>
         <h3>{t("transfer.history")}</h3>
         {history.length === 0 ? (
-          <p className="empty">{t("transfer.none")}</p>
+          <p className={styles.empty}>{t("transfer.none")}</p>
         ) : (
-          <table className="admin-table">
+          <table className={styles.table}>
             <thead>
               <tr>
                 <th>{t("admin.statusCol")}</th>
@@ -260,25 +229,25 @@ export default function TransferPage() {
               {history.map((tr) => (
                 <tr key={tr.id}>
                   <td>
-                    <span className={`badge secret-status-${tr.status === "active" ? "active" : "expired"}`}>
+                    <Badge tone={statusTone(tr.status === "active")}>
                       {tr.status === "active"
                         ? t("transfer.active")
                         : t("transfer.expired")}
-                    </span>
-                    {tr.hasPassphrase && <span className="muted"> 🔒</span>}
-                    {tr.requireLogin && <span className="muted"> 👤</span>}
+                    </Badge>
+                    {tr.hasPassphrase && <span className={styles.muted}> 🔒</span>}
+                    {tr.requireLogin && <span className={styles.muted}> 👤</span>}
                   </td>
                   <td>{tr.files.length}</td>
                   <td>{formatBytes(tr.totalSize)}</td>
                   <td>{tr.downloadCount}</td>
                   <td>{fmt(tr.expiresAt)}</td>
-                  <td className="transfer-row-actions">
+                  <td className={styles.rowActions}>
                     {tr.status === "active" && (
                       <CopyButton text={transferApi.transferShareUrl(tr.token)} />
                     )}
-                    <button className="ghost-btn slim" onClick={() => onDelete(tr.id)}>
+                    <Button variant="ghost" size="sm" onClick={() => onDelete(tr.id)}>
                       {t("transfer.delete")}
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}
