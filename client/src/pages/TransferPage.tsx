@@ -1,10 +1,10 @@
 import { useEffect, useState, type FormEvent } from "react";
-import * as transferApi from "../services/transfer.service";
-import type { TransferSummary } from "../services/transfer.service";
-import { CopyButton } from "../components/CopyButton";
-import { formatBytes } from "../utils/format";
-import { createTransferSchema } from "../schemas/transfer.schema";
-import { useI18n } from "../i18n";
+import * as transferApi from "@/services/transfer.service";
+import type { TransferSummary } from "@/services/transfer.service";
+import { CopyButton } from "@/components/CopyButton";
+import { formatBytes } from "@/utils/format";
+import { createTransferSchema } from "@/schemas/transfer.schema";
+import { useI18n } from "@/i18n";
 import {
   Panel,
   Field,
@@ -17,7 +17,7 @@ import {
   Dropzone,
   DropzoneHint,
   type BadgeTone,
-} from "../components/ui";
+} from "@/components/ui";
 import styles from "./TransferPage.module.scss";
 
 const TTL_KEYS: Record<number, string> = {

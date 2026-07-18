@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import * as transferApi from "../services/transfer.service";
-import type { TransferSummary } from "../services/transfer.service";
-import { formatBytes } from "../utils/format";
-import { useAuth } from "../stores/auth.store";
-import { useI18n } from "../i18n";
-import { Panel, Field, Button, LinkButton, Alert, PageIntro } from "../components/ui";
+import * as transferApi from "@/services/transfer.service";
+import type { TransferSummary } from "@/services/transfer.service";
+import { formatBytes } from "@/utils/format";
+import { useAuth } from "@/stores/auth.store";
+import { useI18n } from "@/i18n";
+import { Panel, Field, Button, LinkButton, Alert, PageIntro } from "@/components/ui";
 import styles from "./TransferDownloadPage.module.scss";
 
 export default function TransferDownloadPage() {

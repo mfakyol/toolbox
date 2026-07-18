@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { runWithConcurrency } from "../utils/pool";
-import type { Result } from "../services/result";
-import { MAX_CONCURRENCY, type ConvertResult, type Job } from "../types";
+import { runWithConcurrency } from "@/utils/pool";
+import type { Result } from "@/services/result";
+import { MAX_CONCURRENCY, type ConvertResult, type Job } from "@/types";
 
 let counter = 0;
 function newId(): string {

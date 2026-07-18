@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useI18n } from "../i18n";
+import { useI18n } from "@/i18n";
 import {
   JsonTool,
   DiffTool,
@@ -8,8 +8,8 @@ import {
   JwtTool,
   HashTool,
   UuidTool,
-} from "../components/devtools/DevTools";
-import { Panel, PageIntro, SubNav } from "../components/ui";
+} from "@/components/devtools/DevTools";
+import { Panel, PageIntro, SubNav } from "@/components/ui";
 
 const TABS = [
   { id: "json", label: "JSON", El: JsonTool },

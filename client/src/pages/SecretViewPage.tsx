@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import * as secretApi from "../services/secret.service";
-import type { SecretMeta } from "../services/secret.service";
-import { CopyButton } from "../components/CopyButton";
-import { useAuth } from "../stores/auth.store";
-import { useI18n } from "../i18n";
-import { Panel, Field, Button, LinkButton, Alert, PageIntro } from "../components/ui";
+import * as secretApi from "@/services/secret.service";
+import type { SecretMeta } from "@/services/secret.service";
+import { CopyButton } from "@/components/CopyButton";
+import { useAuth } from "@/stores/auth.store";
+import { useI18n } from "@/i18n";
+import { Panel, Field, Button, LinkButton, Alert, PageIntro } from "@/components/ui";
 import styles from "./SecretViewPage.module.scss";
 
 export default function SecretViewPage() {

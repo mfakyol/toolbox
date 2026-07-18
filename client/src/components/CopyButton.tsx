@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useI18n } from "../i18n";
+import { useI18n } from "@/i18n";
 import { Button } from "./ui";
 
 export function CopyButton({ text }: { text: string }) {

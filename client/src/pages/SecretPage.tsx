@@ -1,9 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
-import * as secretApi from "../services/secret.service";
-import type { SecretSummary } from "../services/secret.service";
-import { CopyButton } from "../components/CopyButton";
-import { createSecretSchema } from "../schemas/secret.schema";
-import { useI18n } from "../i18n";
+import * as secretApi from "@/services/secret.service";
+import type { SecretSummary } from "@/services/secret.service";
+import { CopyButton } from "@/components/CopyButton";
+import { createSecretSchema } from "@/schemas/secret.schema";
+import { useI18n } from "@/i18n";
 import {
   Panel,
   Field,
@@ -13,7 +13,7 @@ import {
   Checkbox,
   PageIntro,
   type BadgeTone,
-} from "../components/ui";
+} from "@/components/ui";
 import styles from "./SecretPage.module.scss";
 
 const TTL_KEYS: Record<number, string> = {

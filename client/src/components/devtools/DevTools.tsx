@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useI18n } from "../../i18n";
-import { CopyButton } from "../CopyButton";
-import { Field, Button, Alert, Segmented } from "../ui";
+import { useI18n } from "@/i18n";
+import { CopyButton } from "@/components/CopyButton";
+import { Field, Button, Alert, Segmented } from "@/components/ui";
 import {
   base64Encode,
   base64Decode,
@@ -10,8 +10,8 @@ import {
   generateUuids,
   HASH_ALGOS,
   type HashAlgo,
-} from "../../utils/devtools";
-import { diffLines } from "../../utils/diff";
+} from "@/utils/devtools";
+import { diffLines } from "@/utils/diff";
 import styles from "./DevTools.module.scss";
 
 // Shared: input → transform → output layout.

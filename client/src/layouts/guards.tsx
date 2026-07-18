@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../stores/auth.store";
+import { useAuth } from "@/stores/auth.store";
 
 // Gates the whole app behind a session. Users still owing a password change
 // are pushed to /change-password; admins-only areas add RequireAdmin on top.

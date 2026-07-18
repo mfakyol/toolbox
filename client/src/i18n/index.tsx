@@ -29,10 +29,15 @@ function detectDefaultLang(): Lang {
 
 type TFunc = (key: string, params?: Record<string, string | number>) => string;
 
+// Translate a server error: prefer the code's `error.*` translation, fall back
+// to the server-provided message, then a generic error.
+type TErrFunc = (code?: string, fallback?: string) => string;
+
 interface I18nContextValue {
   lang: Lang;
   setLang: (lang: Lang) => void;
   t: TFunc;
+  te: TErrFunc;
 }
 
 const I18nContext = createContext<I18nContextValue | null>(null);

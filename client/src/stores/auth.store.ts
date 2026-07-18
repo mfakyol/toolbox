@@ -3,9 +3,9 @@
 // translates a failed Result into a thrown error for the action's caller so the
 // calling form can show it, and keeps the happy path in state.
 import { create } from "zustand";
-import * as authService from "../services/auth.service";
-import type { AuthUser } from "../services/auth.service";
-import { fetchConfig } from "../services/config.service";
+import * as authService from "@/services/auth.service";
+import type { AuthUser } from "@/services/auth.service";
+import { fetchConfig } from "@/services/config.service";
 
 interface AuthState {
   user: AuthUser | null;

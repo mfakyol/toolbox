@@ -1,10 +1,10 @@
 import { useEffect, useState, type FormEvent } from "react";
-import * as authApi from "../services/auth.service";
-import type { AuthUser, Role } from "../services/auth.service";
-import { useAuth } from "../stores/auth.store";
-import { createUserSchema } from "../schemas/auth.schema";
-import { useI18n } from "../i18n";
-import { Button, Field, Badge, Alert } from "../components/ui";
+import * as authApi from "@/services/auth.service";
+import type { AuthUser, Role } from "@/services/auth.service";
+import { useAuth } from "@/stores/auth.store";
+import { createUserSchema } from "@/schemas/auth.schema";
+import { useI18n } from "@/i18n";
+import { Button, Field, Badge, Alert } from "@/components/ui";
 import styles from "./AdminUsersPage.module.scss";
 
 export default function AdminUsersPage() {

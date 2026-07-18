@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useI18n } from "../i18n";
-import { useAuth } from "../stores/auth.store";
-import { LangSwitcher } from "../components/LangSwitcher";
+import { useI18n } from "@/i18n";
+import { useAuth } from "@/stores/auth.store";
+import { LangSwitcher } from "@/components/LangSwitcher";
 import styles from "./MainLayout.module.scss";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>

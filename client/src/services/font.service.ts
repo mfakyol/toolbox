@@ -1,4 +1,4 @@
-import type { FontFormat, ConvertResult } from "../types";
+import type { FontFormat, ConvertResult } from "@/types";
 import { type Result, ok } from "./result";
 import { postForm, computeStats } from "./http";
 

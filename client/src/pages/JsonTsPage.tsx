@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { jsonToTypescript, type DeclStyle } from "../utils/jsonToTs";
-import { CodeEditor } from "../components/CodeEditor";
-import { useI18n } from "../i18n";
-import { Panel, Field, Button, Alert, PageIntro } from "../components/ui";
+import { jsonToTypescript, type DeclStyle } from "@/utils/jsonToTs";
+import { CodeEditor } from "@/components/CodeEditor";
+import { useI18n } from "@/i18n";
+import { Panel, Field, Button, Alert, PageIntro } from "@/components/ui";
 import styles from "./JsonTsPage.module.scss";
 
 const SAMPLE = JSON.stringify(

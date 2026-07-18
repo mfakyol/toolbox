@@ -1,5 +1,5 @@
 import JSZip from "jszip";
-import type { Job } from "../types";
+import type { Job } from "@/types";
 
 // Packs the outputs of completed jobs into a single ZIP and downloads it.
 export async function downloadZip(

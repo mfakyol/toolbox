@@ -1,6 +1,6 @@
-import { IMAGE_FORMATS, type ImageFormat } from "../../types";
-import { useI18n } from "../../i18n";
-import { Field, Chips, Checkbox } from "../ui";
+import { IMAGE_FORMATS, type ImageFormat } from "@/types";
+import { useI18n } from "@/i18n";
+import { Field, Chips, Checkbox } from "@/components/ui";
 import styles from "./Controls.module.scss";
 
 interface Props {

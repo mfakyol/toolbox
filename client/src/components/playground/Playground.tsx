@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useI18n } from "../../i18n";
-import { CopyButton } from "../CopyButton";
-import { formatBytes } from "../../utils/format";
-import { Button, Badge, Field, Alert, type BadgeTone } from "../ui";
+import { useI18n } from "@/i18n";
+import { CopyButton } from "@/components/CopyButton";
+import { formatBytes } from "@/utils/format";
+import { Button, Badge, Field, Alert, type BadgeTone } from "@/components/ui";
 import styles from "./Playground.module.scss";
 
 // ---- Shared log helpers (reused by the WS / Socket.IO / SignalR testers) ----

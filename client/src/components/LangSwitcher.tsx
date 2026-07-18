@@ -1,5 +1,5 @@
-import { useI18n } from "../i18n";
-import { LANGUAGES, LANGUAGE_LABELS, type Lang } from "../i18n/translations";
+import { useI18n } from "@/i18n";
+import { LANGUAGES, LANGUAGE_LABELS, type Lang } from "@/i18n/translations";
 import styles from "./LangSwitcher.module.scss";
 
 export function LangSwitcher() {

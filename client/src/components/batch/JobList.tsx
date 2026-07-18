@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import type { Job, JobStatus } from "../../types";
-import { formatBytes } from "../../utils/format";
-import { useI18n } from "../../i18n";
-import { Badge, type BadgeTone } from "../ui";
+import type { Job, JobStatus } from "@/types";
+import { formatBytes } from "@/utils/format";
+import { useI18n } from "@/i18n";
+import { Badge, type BadgeTone } from "@/components/ui";
 import styles from "./JobList.module.scss";
 
 const STATUS_KEY: Record<JobStatus, string> = {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { generateFavicons } from "../services/favicon.service";
-import { useI18n } from "../i18n";
+import { generateFavicons } from "@/services/favicon.service";
+import { useI18n } from "@/i18n";
 import {
   Panel,
   Columns,
@@ -11,7 +11,7 @@ import {
   Button,
   Alert,
   PageIntro,
-} from "../components/ui";
+} from "@/components/ui";
 import styles from "./FaviconPage.module.scss";
 
 const PREVIEW_SIZES = [16, 32, 48, 64];

@@ -1,4 +1,4 @@
-import type { ImageConvertOptions, ConvertResult } from "../types";
+import type { ImageConvertOptions, ConvertResult } from "@/types";
 import { type Result, ok } from "./result";
 import { postForm, computeStats } from "./http";
 

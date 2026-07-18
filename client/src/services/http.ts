@@ -1,6 +1,6 @@
 // Shared HTTP helpers. Every request goes out with the session cookie and comes
 // back as a `Result` — these never throw for HTTP or network errors.
-import type { ConvertResult } from "../types";
+import type { ConvertResult } from "@/types";
 import { type Result, ok, fail } from "./result";
 
 // JSON request → Result<T>.
@@ -16,11 +16,11 @@ export async function requestJson<T>(
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      return fail(data.error || `Sunucu hatası (${res.status})`);
+      return fail(data.error || `Server error (${res.status})`, data.code);
     }
     return ok((await res.json()) as T);
   } catch (err) {
-    return fail(err instanceof Error ? err.message : String(err));
+    return fail(err instanceof Error ? err.message : String(err), "NETWORK");
   }
 }
 
@@ -37,11 +37,11 @@ export async function postForm(
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      return fail(data.error || `Sunucu hatası (${res.status})`);
+      return fail(data.error || `Server error (${res.status})`, data.code);
     }
     return ok(res);
   } catch (err) {
-    return fail(err instanceof Error ? err.message : String(err));
+    return fail(err instanceof Error ? err.message : String(err), "NETWORK");
   }
 }
 

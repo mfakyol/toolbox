@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode";
-import { useI18n } from "../i18n";
-import { Panel, Field, PageIntro, LinkButton } from "../components/ui";
+import { useI18n } from "@/i18n";
+import { Panel, Field, PageIntro, LinkButton } from "@/components/ui";
 import styles from "./QrPage.module.scss";
 
 type Ecc = "L" | "M" | "Q" | "H";

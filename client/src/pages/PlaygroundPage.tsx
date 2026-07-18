@@ -1,7 +1,7 @@
 import { lazy, Suspense, useState } from "react";
-import { useI18n } from "../i18n";
-import { HttpTester, WsTester } from "../components/playground/Playground";
-import { Panel, PageIntro, SubNav } from "../components/ui";
+import { useI18n } from "@/i18n";
+import { HttpTester, WsTester } from "@/components/playground/Playground";
+import { Panel, PageIntro, SubNav } from "@/components/ui";
 
 // Socket.IO and SignalR pull in heavy client libraries, so their testers are
 // code-split and only downloaded when their tab is opened.
