@@ -17,7 +17,7 @@ import styles from "./FaviconPage.module.scss";
 const PREVIEW_SIZES = [16, 32, 48, 64];
 
 export default function FaviconPage() {
-  const { t } = useI18n();
+  const { t, te } = useI18n();
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -52,7 +52,7 @@ export default function FaviconPage() {
     setDone(false);
     const res = await generateFavicons(file);
     if (!res.success) {
-      setError(res.error);
+      setError(te(res.code, res.error));
       setLoading(false);
       return;
     }

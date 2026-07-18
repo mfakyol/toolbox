@@ -30,7 +30,7 @@ const STATUS_TONE: Record<string, BadgeTone> = {
 };
 
 export default function SecretPage() {
-  const { t, lang } = useI18n();
+  const { t, te, lang } = useI18n();
 
   const [content, setContent] = useState("");
   const [passphrase, setPassphrase] = useState("");
@@ -49,7 +49,7 @@ export default function SecretPage() {
   async function refresh() {
     const res = await secretApi.listSecrets();
     if (!res.success) {
-      setError(res.error);
+      setError(te(res.code, res.error));
       return;
     }
     setHistory(res.data.secrets);
@@ -79,7 +79,7 @@ export default function SecretPage() {
     const res = await secretApi.createSecret(input);
     setBusy(false);
     if (!res.success) {
-      setError(res.error);
+      setError(te(res.code, res.error));
       return;
     }
     setCreated(res.data.secret);

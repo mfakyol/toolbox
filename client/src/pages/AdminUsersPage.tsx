@@ -9,7 +9,7 @@ import styles from "./AdminUsersPage.module.scss";
 
 export default function AdminUsersPage() {
   const { user: me } = useAuth();
-  const { t } = useI18n();
+  const { t, te } = useI18n();
 
   const [users, setUsers] = useState<AuthUser[]>([]);
   const [email, setEmail] = useState("");
@@ -22,7 +22,7 @@ export default function AdminUsersPage() {
   async function refresh() {
     const res = await authApi.listUsers();
     if (!res.success) {
-      setError(res.error);
+      setError(te(res.code, res.error));
       return;
     }
     setUsers(res.data.users);
@@ -47,7 +47,7 @@ export default function AdminUsersPage() {
     const res = await authApi.createUser(email, password, role);
     setBusy(false);
     if (!res.success) {
-      setError(res.error);
+      setError(te(res.code, res.error));
       return;
     }
     setNotice(t("admin.created"));
@@ -62,7 +62,7 @@ export default function AdminUsersPage() {
     setError(null);
     const res = await authApi.deleteUser(id);
     if (!res.success) {
-      setError(res.error);
+      setError(te(res.code, res.error));
       return;
     }
     await refresh();

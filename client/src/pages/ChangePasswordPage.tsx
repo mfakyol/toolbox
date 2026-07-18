@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/stores/auth.store";
+import { ApiError } from "@/services/result";
 import { changePasswordSchema } from "@/schemas/auth.schema";
 import { useI18n } from "@/i18n";
 import { Button, Field, PageIntro, Alert } from "@/components/ui";
@@ -10,7 +11,7 @@ import styles from "./Auth.module.scss";
 // too, but the flow lands here automatically while mustChangePassword is set.
 export default function ChangePasswordPage() {
   const { user, loading, changePassword } = useAuth();
-  const { t } = useI18n();
+  const { t, te } = useI18n();
 
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
@@ -34,7 +35,8 @@ export default function ChangePasswordPage() {
     try {
       await changePassword(current, next);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      const code = err instanceof ApiError ? err.code : undefined;
+      setError(te(code, err instanceof Error ? err.message : String(err)));
     } finally {
       setBusy(false);
     }

@@ -42,7 +42,9 @@ export interface Job {
   file: File;
   status: JobStatus;
   result?: ConvertResult;
+  // Human-readable error (fallback) and the server error code the UI translates.
   error?: string;
+  errorCode?: string;
 }
 
 // Maximum number of concurrent conversions; the rest wait in the queue.

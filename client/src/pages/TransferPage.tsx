@@ -28,7 +28,7 @@ const TTL_KEYS: Record<number, string> = {
 };
 
 export default function TransferPage() {
-  const { t, lang } = useI18n();
+  const { t, te, lang } = useI18n();
 
   const [files, setFiles] = useState<File[]>([]);
   const [message, setMessage] = useState("");
@@ -51,7 +51,7 @@ export default function TransferPage() {
   async function refresh() {
     const res = await transferApi.listTransfers();
     if (!res.success) {
-      setError(res.error);
+      setError(te(res.code, res.error));
       return;
     }
     setHistory(res.data.transfers);
@@ -87,7 +87,7 @@ export default function TransferPage() {
     const res = await transferApi.createTransfer(input, setProgress);
     setBusy(false);
     if (!res.success) {
-      setError(res.error);
+      setError(te(res.code, res.error));
       return;
     }
     setCreated(res.data.transfer);
@@ -101,7 +101,7 @@ export default function TransferPage() {
     if (!window.confirm(t("transfer.confirmDelete"))) return;
     const res = await transferApi.deleteTransfer(id);
     if (!res.success) {
-      setError(res.error);
+      setError(te(res.code, res.error));
       return;
     }
     await refresh();

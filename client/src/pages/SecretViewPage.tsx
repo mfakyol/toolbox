@@ -10,7 +10,7 @@ import styles from "./SecretViewPage.module.scss";
 
 export default function SecretViewPage() {
   const { token = "" } = useParams();
-  const { t } = useI18n();
+  const { t, te } = useI18n();
   const { user } = useAuth();
 
   const [meta, setMeta] = useState<SecretMeta | null>(null);
@@ -37,7 +37,7 @@ export default function SecretViewPage() {
     const res = await secretApi.revealSecret(token, passphrase || undefined);
     setRevealing(false);
     if (!res.success) {
-      setRevealError(res.error);
+      setRevealError(te(res.code, res.error));
       return;
     }
     setContent(res.data.content);

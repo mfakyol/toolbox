@@ -44,9 +44,9 @@ interface RowProps {
 }
 
 function JobRow({ job, showThumb, onRemove, onCompare }: RowProps) {
-  const { file, status, result, error } = job;
+  const { file, status, result, error, errorCode } = job;
   const good = result ? result.savings >= 0 : true;
-  const { t } = useI18n();
+  const { t, te } = useI18n();
 
   const rowCls = [
     styles.row,
@@ -81,7 +81,7 @@ function JobRow({ job, showThumb, onRemove, onCompare }: RowProps) {
               {result.meta && <> · {result.meta}</>}
             </>
           ) : error ? (
-            <span className={styles.error}>{error}</span>
+            <span className={styles.error}>{te(errorCode, error)}</span>
           ) : (
             formatBytes(file.size)
           )}

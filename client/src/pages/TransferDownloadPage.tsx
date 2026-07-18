@@ -10,7 +10,7 @@ import styles from "./TransferDownloadPage.module.scss";
 
 export default function TransferDownloadPage() {
   const { token = "" } = useParams();
-  const { t } = useI18n();
+  const { t, te } = useI18n();
   const { user } = useAuth();
 
   const [transfer, setTransfer] = useState<TransferSummary | null>(null);
@@ -37,7 +37,7 @@ export default function TransferDownloadPage() {
     const res = await transferApi.verifyTransfer(token, passphrase || undefined);
     setDownloading(false);
     if (!res.success) {
-      setDownloadError(res.error);
+      setDownloadError(te(res.code, res.error));
       return;
     }
     window.location.href = transferApi.transferDownloadUrl(

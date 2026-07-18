@@ -6,6 +6,7 @@ import { create } from "zustand";
 import * as authService from "@/services/auth.service";
 import type { AuthUser } from "@/services/auth.service";
 import { fetchConfig } from "@/services/config.service";
+import { ApiError } from "@/services/result";
 
 interface AuthState {
   user: AuthUser | null;
@@ -35,7 +36,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   login: async (email, password, rememberMe) => {
     const r = await authService.login(email, password, rememberMe);
-    if (!r.success) throw new Error(r.error);
+    if (!r.success) throw new ApiError(r.error, r.code);
     set({ user: r.data.user });
   },
 
@@ -46,7 +47,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   changePassword: async (current, next) => {
     const r = await authService.changePassword(current, next);
-    if (!r.success) throw new Error(r.error);
+    if (!r.success) throw new ApiError(r.error, r.code);
     set({ user: r.data.user });
   },
 }));

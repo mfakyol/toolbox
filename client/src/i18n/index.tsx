@@ -75,7 +75,19 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     [lang]
   );
 
-  const value = useMemo(() => ({ lang, setLang, t }), [lang, setLang, t]);
+  const te = useCallback<TErrFunc>(
+    (code, fallback) => {
+      const dict = translations[lang];
+      if (code && dict[`error.${code}`]) return dict[`error.${code}`];
+      return fallback || dict["error.INTERNAL"];
+    },
+    [lang]
+  );
+
+  const value = useMemo(
+    () => ({ lang, setLang, t, te }),
+    [lang, setLang, t, te]
+  );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }

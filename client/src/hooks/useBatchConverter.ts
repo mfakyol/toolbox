@@ -84,7 +84,7 @@ export function useBatchConverter<TOptions>(
       setJobs((prev) =>
         prev.map((j) =>
           j.status !== "done"
-            ? { ...j, status: "queued", error: undefined, result: undefined }
+            ? { ...j, status: "queued", error: undefined, errorCode: undefined, result: undefined }
             : j
         )
       );
@@ -95,7 +95,11 @@ export function useBatchConverter<TOptions>(
         if (result.success) {
           patchJob(job.id, { status: "done", result: result.data });
         } else {
-          patchJob(job.id, { status: "error", error: result.error });
+          patchJob(job.id, {
+            status: "error",
+            error: result.error,
+            errorCode: result.code,
+          });
         }
       });
 

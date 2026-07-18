@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/stores/auth.store";
+import { ApiError } from "@/services/result";
 import { loginSchema } from "@/schemas/auth.schema";
 import { useI18n } from "@/i18n";
 import { Button, Field, PageIntro, Alert, Checkbox } from "@/components/ui";
@@ -8,7 +9,7 @@ import styles from "./Auth.module.scss";
 
 export default function LoginPage() {
   const { user, loading, authRequired, login } = useAuth();
-  const { t } = useI18n();
+  const { t, te } = useI18n();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,7 +39,8 @@ export default function LoginPage() {
     try {
       await login(email, password, rememberMe);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      const code = err instanceof ApiError ? err.code : undefined;
+      setError(te(code, err instanceof Error ? err.message : String(err)));
     } finally {
       setBusy(false);
     }
