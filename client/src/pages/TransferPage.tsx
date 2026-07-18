@@ -1,8 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
-import * as transferApi from "../api/transfer";
-import type { TransferSummary } from "../api/transfer";
+import * as transferApi from "../services/transfer.service";
+import type { TransferSummary } from "../services/transfer.service";
 import { CopyButton } from "../components/CopyButton";
 import { formatBytes } from "../utils/format";
+import { createTransferSchema } from "../schemas/transfer.schema";
 import { useI18n } from "../i18n";
 import {
   Panel,
@@ -48,12 +49,12 @@ export default function TransferPage() {
   }
 
   async function refresh() {
-    try {
-      const { transfers } = await transferApi.listTransfers();
-      setHistory(transfers);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+    const res = await transferApi.listTransfers();
+    if (!res.success) {
+      setError(res.error);
+      return;
     }
+    setHistory(res.data.transfers);
   }
 
   useEffect(() => {
@@ -66,41 +67,44 @@ export default function TransferPage() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (files.length === 0) return;
     setError(null);
+
+    const input = {
+      files,
+      message: message || undefined,
+      passphrase: passphrase || undefined,
+      ttlSeconds: ttl,
+      requireLogin,
+    };
+    const parsed = createTransferSchema.safeParse(input);
+    if (!parsed.success) {
+      setError(t(parsed.error.issues[0].message));
+      return;
+    }
+
     setBusy(true);
     setProgress(0);
-    try {
-      const { transfer } = await transferApi.createTransfer(
-        {
-          files,
-          message: message || undefined,
-          passphrase: passphrase || undefined,
-          ttlSeconds: ttl,
-          requireLogin,
-        },
-        setProgress
-      );
-      setCreated(transfer);
-      setFiles([]);
-      setMessage("");
-      setPassphrase("");
-      await refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setBusy(false);
+    const res = await transferApi.createTransfer(input, setProgress);
+    setBusy(false);
+    if (!res.success) {
+      setError(res.error);
+      return;
     }
+    setCreated(res.data.transfer);
+    setFiles([]);
+    setMessage("");
+    setPassphrase("");
+    await refresh();
   }
 
   async function onDelete(id: string) {
     if (!window.confirm(t("transfer.confirmDelete"))) return;
-    try {
-      await transferApi.deleteTransfer(id);
-      await refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+    const res = await transferApi.deleteTransfer(id);
+    if (!res.success) {
+      setError(res.error);
+      return;
     }
+    await refresh();
   }
 
   const statusTone = (active: boolean): BadgeTone => (active ? "accent" : "neutral");

@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Layout } from "./components/Layout";
-import { RequireAuth, RequireAdmin } from "./auth/guards";
+import { MainLayout } from "./layouts/MainLayout";
+import { RequireAuth, RequireAdmin } from "./layouts/guards";
 import ImagePage from "./pages/ImagePage";
 import FontPage from "./pages/FontPage";
 import FaviconPage from "./pages/FaviconPage";
@@ -35,7 +35,7 @@ export default function App() {
 
         {/* Everything below requires a logged-in, password-changed user */}
         <Route element={<RequireAuth />}>
-          <Route element={<Layout />}>
+          <Route element={<MainLayout />}>
             <Route index element={<ImagePage />} />
             <Route path="font" element={<FontPage />} />
             <Route path="favicon" element={<FaviconPage />} />

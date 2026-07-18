@@ -4,9 +4,9 @@ import {
   HubConnectionBuilder,
   HubConnectionState,
 } from "@microsoft/signalr";
-import { useI18n } from "../i18n";
+import { useI18n } from "../../i18n";
 import { useLog, LogView } from "./Playground";
-import { Button, Badge, Field, type BadgeTone } from "./ui";
+import { Button, Badge, Field, type BadgeTone } from "../ui";
 import styles from "./Playground.module.scss";
 
 // SignalR tester. Loaded lazily so @microsoft/signalr stays out of the main

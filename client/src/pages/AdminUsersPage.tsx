@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
-import * as authApi from "../api/auth";
-import type { AuthUser, Role } from "../api/auth";
-import { useAuth } from "../auth/AuthContext";
+import * as authApi from "../services/auth.service";
+import type { AuthUser, Role } from "../services/auth.service";
+import { useAuth } from "../stores/auth.store";
+import { createUserSchema } from "../schemas/auth.schema";
 import { useI18n } from "../i18n";
 import { Button, Field, Badge, Alert } from "../components/ui";
 import styles from "./AdminUsersPage.module.scss";
@@ -19,12 +20,12 @@ export default function AdminUsersPage() {
   const [busy, setBusy] = useState(false);
 
   async function refresh() {
-    try {
-      const { users } = await authApi.listUsers();
-      setUsers(users);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+    const res = await authApi.listUsers();
+    if (!res.success) {
+      setError(res.error);
+      return;
     }
+    setUsers(res.data.users);
   }
 
   useEffect(() => {
@@ -35,30 +36,36 @@ export default function AdminUsersPage() {
     e.preventDefault();
     setError(null);
     setNotice(null);
-    setBusy(true);
-    try {
-      await authApi.createUser(email, password, role);
-      setNotice(t("admin.created"));
-      setEmail("");
-      setPassword("");
-      setRole("user");
-      await refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setBusy(false);
+
+    const parsed = createUserSchema.safeParse({ email, password, role });
+    if (!parsed.success) {
+      setError(t(parsed.error.issues[0].message));
+      return;
     }
+
+    setBusy(true);
+    const res = await authApi.createUser(email, password, role);
+    setBusy(false);
+    if (!res.success) {
+      setError(res.error);
+      return;
+    }
+    setNotice(t("admin.created"));
+    setEmail("");
+    setPassword("");
+    setRole("user");
+    await refresh();
   }
 
   async function onDelete(id: string) {
     if (!window.confirm(t("admin.confirmDelete"))) return;
     setError(null);
-    try {
-      await authApi.deleteUser(id);
-      await refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+    const res = await authApi.deleteUser(id);
+    if (!res.success) {
+      setError(res.error);
+      return;
     }
+    await refresh();
   }
 
   return (

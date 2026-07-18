@@ -1,5 +1,7 @@
-// File-transfer API client. Uploads use XHR for progress; downloads use a
-// native browser navigation so large files aren't buffered in memory.
+// File-transfer service. Uploads use XHR for progress; downloads use a native
+// browser navigation so large files aren't buffered in memory.
+import { type Result, ok, fail } from "./result";
+import { requestJson } from "./http";
 
 export type TransferStatus = "active" | "expired";
 
@@ -30,24 +32,12 @@ export interface CreateTransferInput {
   requireLogin: boolean;
 }
 
-async function api<T>(url: string, options: RequestInit = {}): Promise<T> {
-  const res = await fetch(url, { credentials: "include", ...options });
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    const err = new Error(data.error || `Sunucu hatası (${res.status})`) as Error & {
-      status?: number;
-    };
-    err.status = res.status;
-    throw err;
-  }
-  return res.json() as Promise<T>;
-}
-
-// Uploads via XHR so we can report progress (0–100).
+// Uploads via XHR so we can report progress (0–100). Resolves to a Result;
+// it never rejects.
 export function createTransfer(
   input: CreateTransferInput,
   onProgress?: (percent: number) => void
-): Promise<{ transfer: TransferSummary }> {
+): Promise<Result<{ transfer: TransferSummary }>> {
   const fd = new FormData();
   input.files.forEach((f) => fd.append("files", f));
   if (input.message) fd.append("message", input.message);
@@ -55,7 +45,7 @@ export function createTransfer(
   fd.append("ttlSeconds", String(input.ttlSeconds));
   fd.append("requireLogin", String(input.requireLogin));
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/transfers");
     xhr.withCredentials = true;
@@ -73,47 +63,49 @@ export function createTransfer(
         /* ignore */
       }
       if (xhr.status >= 200 && xhr.status < 300) {
-        resolve(data as { transfer: TransferSummary });
+        resolve(ok(data as { transfer: TransferSummary }));
       } else {
-        reject(
-          new Error(
-            (data as { error?: string }).error || `Sunucu hatası (${xhr.status})`
+        resolve(
+          fail(
+            (data as { error?: string }).error ||
+              `Sunucu hatası (${xhr.status})`
           )
         );
       }
     };
-    xhr.onerror = () => reject(new Error("Ağ hatası."));
+    xhr.onerror = () => resolve(fail("Ağ hatası."));
     xhr.send(fd);
   });
 }
 
-export function listTransfers(): Promise<{ transfers: TransferSummary[] }> {
-  return api("/api/transfers");
+export function listTransfers(): Promise<Result<{ transfers: TransferSummary[] }>> {
+  return requestJson("/api/transfers");
 }
 
 export function getTransferMeta(
   token: string
-): Promise<{ transfer: TransferSummary }> {
-  return api(`/api/transfers/${encodeURIComponent(token)}/meta`);
+): Promise<Result<{ transfer: TransferSummary }>> {
+  return requestJson(`/api/transfers/${encodeURIComponent(token)}/meta`);
 }
 
 // Validates access (login + passphrase) before triggering a native download.
 export function verifyTransfer(
   token: string,
   passphrase?: string
-): Promise<{ ok: boolean }> {
-  return api(`/api/transfers/${encodeURIComponent(token)}/verify`, {
+): Promise<Result<{ ok: boolean }>> {
+  return requestJson(`/api/transfers/${encodeURIComponent(token)}/verify`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ passphrase }),
   });
 }
 
-export function deleteTransfer(id: string): Promise<{ ok: boolean }> {
-  return api(`/api/transfers/${encodeURIComponent(id)}`, { method: "DELETE" });
+export function deleteTransfer(id: string): Promise<Result<{ ok: boolean }>> {
+  return requestJson(`/api/transfers/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
 }
 
-// Shareable page URL (not the raw download).
+// Shareable page URL (not the raw download; pure — no request).
 export function transferShareUrl(token: string): string {
   return `${window.location.origin}/t/${token}`;
 }

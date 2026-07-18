@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import * as secretApi from "../api/secret";
-import type { SecretMeta } from "../api/secret";
+import * as secretApi from "../services/secret.service";
+import type { SecretMeta } from "../services/secret.service";
 import { CopyButton } from "../components/CopyButton";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../stores/auth.store";
 import { useI18n } from "../i18n";
 import { Panel, Field, Button, LinkButton, Alert, PageIntro } from "../components/ui";
 import styles from "./SecretViewPage.module.scss";
@@ -23,25 +23,24 @@ export default function SecretViewPage() {
   const [revealing, setRevealing] = useState(false);
 
   useEffect(() => {
-    secretApi
-      .getSecretMeta(token)
-      .then(({ meta }) => setMeta(meta))
-      .catch(() => setLoadError(t("secret.notFound")))
-      .finally(() => setLoading(false));
+    secretApi.getSecretMeta(token).then((res) => {
+      if (res.success) setMeta(res.data.meta);
+      else setLoadError(t("secret.notFound"));
+      setLoading(false);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   async function onReveal() {
     setRevealError(null);
     setRevealing(true);
-    try {
-      const { content } = await secretApi.revealSecret(token, passphrase || undefined);
-      setContent(content);
-    } catch (err) {
-      setRevealError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setRevealing(false);
+    const res = await secretApi.revealSecret(token, passphrase || undefined);
+    setRevealing(false);
+    if (!res.success) {
+      setRevealError(res.error);
+      return;
     }
+    setContent(res.data.content);
   }
 
   function Frame({ children }: { children: React.ReactNode }) {

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import type { Job } from "../types";
+import type { Job } from "../../types";
 import { CompareSlider } from "./CompareSlider";
-import { formatBytes } from "../utils/format";
-import { useI18n } from "../i18n";
+import { formatBytes } from "../../utils/format";
+import { useI18n } from "../../i18n";
 import styles from "./CompareModal.module.scss";
 
 interface Props {

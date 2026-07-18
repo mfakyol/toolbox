@@ -25,6 +25,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     "favicon.generate": "Üret & ZIP indir",
     "favicon.generating": "Üretiliyor…",
     "favicon.done": "✓ favicons.zip indirildi",
+    "favicon.notImage": "Lütfen bir görsel seç.",
 
     "nav.qr": "🔳 Karekod",
     "qr.intro":
@@ -45,6 +46,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     "qr.downloadPng": "⬇ PNG indir",
     "qr.downloadSvg": "⬇ SVG indir",
     "qr.empty": "Önizleme için bir içerik gir.",
+    "qr.previewAlt": "QR kod önizlemesi",
     "qr.tooLong":
       "İçerik bu ayarlar için çok uzun. Metni kısalt ya da hata düzeltme seviyesini düşür.",
 
@@ -66,6 +68,10 @@ export const translations: Record<Lang, Record<string, string>> = {
     "auth.save": "Kaydet",
     "auth.saving": "Kaydediliyor…",
     "auth.passwordMismatch": "Şifreler eşleşmiyor.",
+    "validation.emailInvalid": "Geçerli bir e-posta gir.",
+    "validation.required": "Bu alan zorunlu.",
+    "validation.contentRequired": "Lütfen paylaşılacak içeriği gir.",
+    "validation.filesRequired": "En az bir dosya seç.",
     "auth.passwordTooShort": "Şifre en az 8 karakter olmalı.",
     "auth.admin": "👤 Kullanıcılar",
     "admin.title": "Kullanıcı Yönetimi",
@@ -301,6 +307,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     "favicon.generate": "Erstellen & ZIP herunterladen",
     "favicon.generating": "Wird erstellt…",
     "favicon.done": "✓ favicons.zip heruntergeladen",
+    "favicon.notImage": "Bitte wähle ein Bild.",
 
     "nav.qr": "🔳 QR-Code",
     "qr.intro":
@@ -321,6 +328,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     "qr.downloadPng": "⬇ PNG herunterladen",
     "qr.downloadSvg": "⬇ SVG herunterladen",
     "qr.empty": "Gib einen Inhalt für die Vorschau ein.",
+    "qr.previewAlt": "QR-Code-Vorschau",
     "qr.tooLong":
       "Inhalt ist für diese Einstellungen zu lang. Kürze den Text oder senke die Fehlerkorrektur-Stufe.",
 
@@ -342,6 +350,10 @@ export const translations: Record<Lang, Record<string, string>> = {
     "auth.save": "Speichern",
     "auth.saving": "Speichern…",
     "auth.passwordMismatch": "Passwörter stimmen nicht überein.",
+    "validation.emailInvalid": "Gib eine gültige E-Mail ein.",
+    "validation.required": "Dieses Feld ist erforderlich.",
+    "validation.contentRequired": "Bitte gib den zu teilenden Inhalt ein.",
+    "validation.filesRequired": "Wähle mindestens eine Datei.",
     "auth.passwordTooShort": "Passwort muss mindestens 8 Zeichen lang sein.",
     "auth.admin": "👤 Benutzer",
     "admin.title": "Benutzerverwaltung",
@@ -577,6 +589,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     "favicon.generate": "Generate & download ZIP",
     "favicon.generating": "Generating…",
     "favicon.done": "✓ favicons.zip downloaded",
+    "favicon.notImage": "Please select an image.",
 
     "nav.qr": "🔳 QR Code",
     "qr.intro": "Turn text or a link into a QR code; download it as PNG or SVG.",
@@ -596,6 +609,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     "qr.downloadPng": "⬇ Download PNG",
     "qr.downloadSvg": "⬇ Download SVG",
     "qr.empty": "Enter some content to preview.",
+    "qr.previewAlt": "QR code preview",
     "qr.tooLong":
       "Content is too long for these settings. Shorten the text or lower the error-correction level.",
 
@@ -617,6 +631,10 @@ export const translations: Record<Lang, Record<string, string>> = {
     "auth.save": "Save",
     "auth.saving": "Saving…",
     "auth.passwordMismatch": "Passwords do not match.",
+    "validation.emailInvalid": "Enter a valid email.",
+    "validation.required": "This field is required.",
+    "validation.contentRequired": "Please enter the content to share.",
+    "validation.filesRequired": "Select at least one file.",
     "auth.passwordTooShort": "Password must be at least 8 characters.",
     "auth.admin": "👤 Users",
     "admin.title": "User Management",

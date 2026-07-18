@@ -1,5 +1,6 @@
 import type { ImageConvertOptions, ConvertResult } from "../types";
-import { postForm, computeStats } from "./shared";
+import { type Result, ok } from "./result";
+import { postForm, computeStats } from "./http";
 
 const ENDPOINT = "/api/convert";
 
@@ -7,7 +8,7 @@ const ENDPOINT = "/api/convert";
 export async function convertImage(
   file: File,
   opts: ImageConvertOptions
-): Promise<ConvertResult> {
+): Promise<Result<ConvertResult>> {
   const fd = new FormData();
   fd.append("image", file);
   fd.append("format", opts.format);
@@ -17,15 +18,18 @@ export async function convertImage(
   fd.append("keepMetadata", String(opts.keepMetadata));
 
   const res = await postForm(ENDPOINT, fd);
-  const ow = res.headers.get("X-Original-Width");
-  const oh = res.headers.get("X-Original-Height");
-  const w = res.headers.get("X-Output-Width");
-  const h = res.headers.get("X-Output-Height");
+  if (!res.success) return res;
+  const response = res.data;
 
-  return {
-    ...(await computeStats(res, file)),
+  const ow = response.headers.get("X-Original-Width");
+  const oh = response.headers.get("X-Original-Height");
+  const w = response.headers.get("X-Output-Width");
+  const h = response.headers.get("X-Output-Height");
+
+  return ok({
+    ...(await computeStats(response, file)),
     meta: buildDimsMeta(ow, oh, w, h),
-  };
+  });
 }
 
 // Builds a string like "800 × 600 → 200 × 150 px".

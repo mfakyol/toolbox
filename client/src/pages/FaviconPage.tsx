@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { generateFavicons } from "../api/favicon";
+import { generateFavicons } from "../services/favicon.service";
 import { useI18n } from "../i18n";
 import {
   Panel,
@@ -33,7 +33,7 @@ export default function FaviconPage() {
   function select(f: File | undefined | null) {
     if (!f) return;
     if (!f.type.startsWith("image/")) {
-      setError("Please select an image.");
+      setError(t("favicon.notImage"));
       return;
     }
     setError(null);
@@ -50,20 +50,20 @@ export default function FaviconPage() {
     setLoading(true);
     setError(null);
     setDone(false);
-    try {
-      const blob = await generateFavicons(file);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "favicons.zip";
-      a.click();
-      URL.revokeObjectURL(url);
-      setDone(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error.");
-    } finally {
+    const res = await generateFavicons(file);
+    if (!res.success) {
+      setError(res.error);
       setLoading(false);
+      return;
     }
+    const url = URL.createObjectURL(res.data);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "favicons.zip";
+    a.click();
+    URL.revokeObjectURL(url);
+    setDone(true);
+    setLoading(false);
   }
 
   return (

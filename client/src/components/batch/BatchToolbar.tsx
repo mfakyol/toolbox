@@ -1,9 +1,9 @@
 import { useState } from "react";
-import type { Job } from "../types";
-import { MAX_CONCURRENCY } from "../types";
-import { downloadZip } from "../utils/zip";
-import { useI18n } from "../i18n";
-import { Button, Progress } from "./ui";
+import type { Job } from "../../types";
+import { MAX_CONCURRENCY } from "../../types";
+import { downloadZip } from "../../utils/zip";
+import { useI18n } from "../../i18n";
+import { Button, Progress } from "../ui";
 import styles from "./BatchToolbar.module.scss";
 
 interface Props {

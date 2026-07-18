@@ -1,5 +1,6 @@
 import type { FontFormat, ConvertResult } from "../types";
-import { postForm, computeStats } from "./shared";
+import { type Result, ok } from "./result";
+import { postForm, computeStats } from "./http";
 
 const ENDPOINT = "/api/font/convert";
 
@@ -7,17 +8,20 @@ const ENDPOINT = "/api/font/convert";
 export async function convertFont(
   file: File,
   format: FontFormat
-): Promise<ConvertResult> {
+): Promise<Result<ConvertResult>> {
   const fd = new FormData();
   fd.append("font", file);
   fd.append("format", format);
 
   const res = await postForm(ENDPOINT, fd);
-  const from = res.headers.get("X-Original-Format");
-  const to = res.headers.get("X-Output-Format");
+  if (!res.success) return res;
+  const response = res.data;
 
-  return {
-    ...(await computeStats(res, file)),
+  const from = response.headers.get("X-Original-Format");
+  const to = response.headers.get("X-Output-Format");
+
+  return ok({
+    ...(await computeStats(response, file)),
     meta: from && to ? `${from.toUpperCase()} → ${to.toUpperCase()}` : undefined,
-  };
+  });
 }

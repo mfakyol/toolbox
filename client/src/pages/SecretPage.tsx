@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
-import * as secretApi from "../api/secret";
-import type { SecretSummary } from "../api/secret";
+import * as secretApi from "../services/secret.service";
+import type { SecretSummary } from "../services/secret.service";
 import { CopyButton } from "../components/CopyButton";
+import { createSecretSchema } from "../schemas/secret.schema";
 import { useI18n } from "../i18n";
 import {
   Panel,
@@ -46,12 +47,12 @@ export default function SecretPage() {
   }
 
   async function refresh() {
-    try {
-      const { secrets } = await secretApi.listSecrets();
-      setHistory(secrets);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+    const res = await secretApi.listSecrets();
+    if (!res.success) {
+      setError(res.error);
+      return;
     }
+    setHistory(res.data.secrets);
   }
 
   useEffect(() => {
@@ -61,23 +62,30 @@ export default function SecretPage() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    setBusy(true);
-    try {
-      const { secret } = await secretApi.createSecret({
-        content,
-        passphrase: passphrase || undefined,
-        ttlSeconds: ttl,
-        requireLogin,
-      });
-      setCreated(secret);
-      setContent("");
-      setPassphrase("");
-      await refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setBusy(false);
+
+    const input = {
+      content,
+      passphrase: passphrase || undefined,
+      ttlSeconds: ttl,
+      requireLogin,
+    };
+    const parsed = createSecretSchema.safeParse(input);
+    if (!parsed.success) {
+      setError(t(parsed.error.issues[0].message));
+      return;
     }
+
+    setBusy(true);
+    const res = await secretApi.createSecret(input);
+    setBusy(false);
+    if (!res.success) {
+      setError(res.error);
+      return;
+    }
+    setCreated(res.data.secret);
+    setContent("");
+    setPassphrase("");
+    await refresh();
   }
 
   function reset() {

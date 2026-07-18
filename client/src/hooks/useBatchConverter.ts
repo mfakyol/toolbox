@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { runWithConcurrency } from "../utils/pool";
+import type { Result } from "../services/result";
 import { MAX_CONCURRENCY, type ConvertResult, type Job } from "../types";
 
 let counter = 0;
@@ -13,7 +14,7 @@ function newId(): string {
 type ConvertFn<TOptions> = (
   file: File,
   options: TOptions
-) => Promise<ConvertResult>;
+) => Promise<Result<ConvertResult>>;
 
 // Generic hook that manages multi-file conversion.
 // Each file is a "job"; jobs run up to MAX_CONCURRENCY in parallel,
@@ -90,14 +91,11 @@ export function useBatchConverter<TOptions>(
 
       await runWithConcurrency(targets, MAX_CONCURRENCY, async (job) => {
         patchJob(job.id, { status: "processing" });
-        try {
-          const result = await convertFn(job.file, options);
-          patchJob(job.id, { status: "done", result });
-        } catch (err) {
-          patchJob(job.id, {
-            status: "error",
-            error: err instanceof Error ? err.message : "Unknown error.",
-          });
+        const result = await convertFn(job.file, options);
+        if (result.success) {
+          patchJob(job.id, { status: "done", result: result.data });
+        } else {
+          patchJob(job.id, { status: "error", error: result.error });
         }
       });
 

@@ -171,11 +171,11 @@ export default function QrPage() {
             <p className={styles.error}>{t("qr.tooLong")}</p>
           ) : svg ? (
             <>
-              <div
-                className={styles.preview}
-                style={{ background: bg }}
-                dangerouslySetInnerHTML={{ __html: svg }}
-              />
+              <div className={styles.preview} style={{ background: bg }}>
+                {svgUrl && (
+                  <img src={svgUrl} alt={t("qr.previewAlt")} width={size} height={size} />
+                )}
+              </div>
               <div className={styles.downloads}>
                 {pngUrl && (
                   <LinkButton variant="success" block href={pngUrl} download="qr.png">

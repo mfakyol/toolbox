@@ -1,4 +1,4 @@
-import { Dropzone, DropzoneHint } from "./ui";
+import { Dropzone, DropzoneHint } from "../ui";
 
 interface Props {
   accept: string;

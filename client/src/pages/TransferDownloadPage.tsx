@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import * as transferApi from "../api/transfer";
-import type { TransferSummary } from "../api/transfer";
+import * as transferApi from "../services/transfer.service";
+import type { TransferSummary } from "../services/transfer.service";
 import { formatBytes } from "../utils/format";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../stores/auth.store";
 import { useI18n } from "../i18n";
 import { Panel, Field, Button, LinkButton, Alert, PageIntro } from "../components/ui";
 import styles from "./TransferDownloadPage.module.scss";
@@ -22,29 +22,28 @@ export default function TransferDownloadPage() {
   const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
-    transferApi
-      .getTransferMeta(token)
-      .then(({ transfer }) => setTransfer(transfer))
-      .catch(() => setLoadError(t("transfer.notFound")))
-      .finally(() => setLoading(false));
+    transferApi.getTransferMeta(token).then((res) => {
+      if (res.success) setTransfer(res.data.transfer);
+      else setLoadError(t("transfer.notFound"));
+      setLoading(false);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   async function onDownload() {
     setDownloadError(null);
     setDownloading(true);
-    try {
-      // Validate access first, then hand off to a native browser download.
-      await transferApi.verifyTransfer(token, passphrase || undefined);
-      window.location.href = transferApi.transferDownloadUrl(
-        token,
-        passphrase || undefined
-      );
-    } catch (err) {
-      setDownloadError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setDownloading(false);
+    // Validate access first, then hand off to a native browser download.
+    const res = await transferApi.verifyTransfer(token, passphrase || undefined);
+    setDownloading(false);
+    if (!res.success) {
+      setDownloadError(res.error);
+      return;
     }
+    window.location.href = transferApi.transferDownloadUrl(
+      token,
+      passphrase || undefined
+    );
   }
 
   function Frame({ children }: { children: React.ReactNode }) {

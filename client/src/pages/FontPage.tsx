@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import { BatchDropzone } from "../components/BatchDropzone";
-import { JobList } from "../components/JobList";
-import { BatchToolbar } from "../components/BatchToolbar";
+import { BatchDropzone } from "../components/batch/BatchDropzone";
+import { JobList } from "../components/batch/JobList";
+import { BatchToolbar } from "../components/batch/BatchToolbar";
 import { useBatchConverter } from "../hooks/useBatchConverter";
-import { convertFont } from "../api/font";
+import { convertFont } from "../services/font.service";
 import { useI18n } from "../i18n";
 import { FONT_FORMATS, type FontFormat } from "../types";
 import { Panel, Columns, Field, Chips, PageIntro, Alert } from "../components/ui";

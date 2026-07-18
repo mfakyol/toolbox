@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { getImageDimensions, type Dims } from "../utils/imageDims";
-import { BatchDropzone } from "../components/BatchDropzone";
-import { Controls } from "../components/Controls";
-import { JobList } from "../components/JobList";
-import { BatchToolbar } from "../components/BatchToolbar";
-import { CompareModal } from "../components/CompareModal";
+import { BatchDropzone } from "../components/batch/BatchDropzone";
+import { Controls } from "../components/batch/Controls";
+import { JobList } from "../components/batch/JobList";
+import { BatchToolbar } from "../components/batch/BatchToolbar";
+import { CompareModal } from "../components/compare/CompareModal";
 import { useBatchConverter } from "../hooks/useBatchConverter";
-import { convertImage } from "../api/convert";
+import { convertImage } from "../services/convert.service";
 import { useI18n } from "../i18n";
 import type { ImageConvertOptions, ImageFormat, Job } from "../types";
 import { PageIntro, Columns, Panel, Alert } from "../components/ui";

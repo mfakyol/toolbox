@@ -1,13 +1,13 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useI18n } from "../i18n";
-import { useAuth } from "../auth/AuthContext";
-import { LangSwitcher } from "./LangSwitcher";
-import styles from "./Layout.module.scss";
+import { useAuth } from "../stores/auth.store";
+import { LangSwitcher } from "../components/LangSwitcher";
+import styles from "./MainLayout.module.scss";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `${styles.navLink} ${isActive ? styles.active : ""}`;
 
-export function Layout() {
+export function MainLayout() {
   const { t } = useI18n();
   const { user, logout, authRequired } = useAuth();
   const navigate = useNavigate();

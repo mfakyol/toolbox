@@ -8,7 +8,7 @@ import {
   JwtTool,
   HashTool,
   UuidTool,
-} from "../components/DevTools";
+} from "../components/devtools/DevTools";
 import { Panel, PageIntro, SubNav } from "../components/ui";
 
 const TABS = [

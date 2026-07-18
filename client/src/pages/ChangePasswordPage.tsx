@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../stores/auth.store";
+import { changePasswordSchema } from "../schemas/auth.schema";
 import { useI18n } from "../i18n";
 import { Button, Field, PageIntro, Alert } from "../components/ui";
 import styles from "./Auth.module.scss";
@@ -23,12 +24,9 @@ export default function ChangePasswordPage() {
     e.preventDefault();
     setError(null);
 
-    if (next.length < 8) {
-      setError(t("auth.passwordTooShort"));
-      return;
-    }
-    if (next !== confirm) {
-      setError(t("auth.passwordMismatch"));
+    const parsed = changePasswordSchema.safeParse({ current, next, confirm });
+    if (!parsed.success) {
+      setError(t(parsed.error.issues[0].message));
       return;
     }
 

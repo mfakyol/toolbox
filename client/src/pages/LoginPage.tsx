@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../stores/auth.store";
+import { loginSchema } from "../schemas/auth.schema";
 import { useI18n } from "../i18n";
 import { Button, Field, PageIntro, Alert, Checkbox } from "../components/ui";
 import styles from "./Auth.module.scss";
@@ -26,6 +27,13 @@ export default function LoginPage() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+
+    const parsed = loginSchema.safeParse({ email, password, rememberMe });
+    if (!parsed.success) {
+      setError(t(parsed.error.issues[0].message));
+      return;
+    }
+
     setBusy(true);
     try {
       await login(email, password, rememberMe);
