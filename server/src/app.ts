@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
@@ -12,15 +13,28 @@ import { notFound, errorHandler } from "./middleware/errorHandler.js";
 export function createApp() {
   const app = express();
 
-  // Behind a proxy chain in production (host nginx → container nginx). Trust
-  // the forwarded headers so req.secure / Secure cookies work correctly.
-  if (config.isProd) app.set("trust proxy", true);
+  // Behind exactly two proxy hops in production (host nginx → container nginx).
+  // A fixed count (not `true`) is deliberate: trusting the whole chain would let
+  // a client spoof X-Forwarded-For, which also skews IP-based rate limiting.
+  if (config.isProd) app.set("trust proxy", 2);
+
+  // Security headers. CSP is intentionally left to whatever serves the app HTML
+  // (the nginx host) — this API only returns JSON — so disable helmet's CSP and
+  // keep the rest (HSTS in prod, X-Content-Type-Options, referrer-policy, …).
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+      hsts: config.isProd,
+    })
+  );
 
   // Cookies must be sent cross-origin, so a specific origin (not "*") plus
   // credentials is required once auth is in play.
   app.use(cors({ origin: config.corsOrigin, credentials: true }));
 
-  app.use(express.json());
+  // Cap JSON body size. Tool payloads are small; large uploads go through
+  // multipart (multer) with their own limits, not this parser.
+  app.use(express.json({ limit: "256kb" }));
 
   app.use(
     session({

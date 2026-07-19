@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { requireAuth, requireAdmin } from "../middleware/auth.js";
+import { validateBody } from "../middleware/validate.js";
+import { createUserSchema } from "../schemas/admin.schema.js";
 import {
   listUsers,
   createUser,
@@ -12,7 +14,7 @@ const router = Router();
 router.use("/admin", requireAuth, requireAdmin);
 
 router.get("/admin/users", listUsers);
-router.post("/admin/users", createUser);
+router.post("/admin/users", validateBody(createUserSchema), createUser);
 router.delete("/admin/users/:id", deleteUser);
 
 export default router;
