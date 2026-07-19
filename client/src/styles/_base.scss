@@ -46,6 +46,9 @@ a {
 }
 
 // Shared text/select/textarea look (component modules can still override).
+// `input:not([type])` covers text-like inputs written without an explicit type
+// (e.g. read-only share-link fields) — an [type="text"] selector would miss those.
+input:not([type]),
 input[type="text"],
 input[type="email"],
 input[type="password"],
