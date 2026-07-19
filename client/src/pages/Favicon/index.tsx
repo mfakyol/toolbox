@@ -12,7 +12,7 @@ import {
   Alert,
   PageIntro,
 } from "@/components/ui";
-import styles from "./FaviconPage.module.scss";
+import styles from "./styles.module.scss";
 
 const PREVIEW_SIZES = [16, 32, 48, 64];
 

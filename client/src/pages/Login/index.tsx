@@ -5,7 +5,7 @@ import { ApiError } from "@/services/result";
 import { loginSchema } from "@/schemas/auth.schema";
 import { useI18n } from "@/i18n";
 import { Button, Field, PageIntro, Alert, Checkbox } from "@/components/ui";
-import styles from "./Auth.module.scss";
+import styles from "./styles.module.scss";
 
 export default function LoginPage() {
   const { user, loading, authRequired, login } = useAuth();

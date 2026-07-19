@@ -10,7 +10,7 @@ import { convertImage } from "@/services/convert.service";
 import { useI18n } from "@/i18n";
 import type { ImageConvertOptions, ImageFormat, Job } from "@/types";
 import { PageIntro, Columns, Panel, Alert } from "@/components/ui";
-import styles from "./ToolPage.module.scss";
+import styles from "./styles.module.scss";
 
 export default function ImagePage() {
   const { t } = useI18n();

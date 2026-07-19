@@ -5,7 +5,7 @@ import { useAuth } from "@/stores/auth.store";
 import { createUserSchema } from "@/schemas/auth.schema";
 import { useI18n } from "@/i18n";
 import { Button, Field, Badge, Alert } from "@/components/ui";
-import styles from "./AdminUsersPage.module.scss";
+import styles from "./styles.module.scss";
 
 export default function AdminUsersPage() {
   const { user: me } = useAuth();

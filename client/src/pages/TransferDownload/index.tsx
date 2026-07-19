@@ -6,7 +6,7 @@ import { formatBytes } from "@/utils/format";
 import { useAuth } from "@/stores/auth.store";
 import { useI18n } from "@/i18n";
 import { Panel, Field, Button, LinkButton, Alert, PageIntro } from "@/components/ui";
-import styles from "./TransferDownloadPage.module.scss";
+import styles from "./styles.module.scss";
 
 export default function TransferDownloadPage() {
   const { token = "" } = useParams();

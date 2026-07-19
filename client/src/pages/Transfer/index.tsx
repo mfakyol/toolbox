@@ -18,7 +18,7 @@ import {
   DropzoneHint,
   type BadgeTone,
 } from "@/components/ui";
-import styles from "./TransferPage.module.scss";
+import styles from "./styles.module.scss";
 
 const TTL_KEYS: Record<number, string> = {
   3600: "secret.ttl1h",

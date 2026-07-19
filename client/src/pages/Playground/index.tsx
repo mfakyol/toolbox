@@ -5,8 +5,8 @@ import { Panel, PageIntro, SubNav } from "@/components/ui";
 
 // Socket.IO and SignalR pull in heavy client libraries, so their testers are
 // code-split and only downloaded when their tab is opened.
-const SocketIoTester = lazy(() => import("../components/playground/SocketIoTester"));
-const SignalRTester = lazy(() => import("../components/playground/SignalRTester"));
+const SocketIoTester = lazy(() => import("@/components/playground/SocketIoTester"));
+const SignalRTester = lazy(() => import("@/components/playground/SignalRTester"));
 
 const TABS = [
   { id: "http", label: "HTTP", El: HttpTester },

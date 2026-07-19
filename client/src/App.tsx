@@ -2,24 +2,24 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MainLayout } from "./layouts/MainLayout";
 import { RequireAuth, RequireAdmin } from "./layouts/guards";
-import ImagePage from "./pages/ImagePage";
-import FontPage from "./pages/FontPage";
-import FaviconPage from "./pages/FaviconPage";
-import QrPage from "./pages/QrPage";
-import ToolsPage from "./pages/ToolsPage";
-import LoginPage from "./pages/LoginPage";
-import ChangePasswordPage from "./pages/ChangePasswordPage";
-import AdminUsersPage from "./pages/AdminUsersPage";
-import SecretPage from "./pages/SecretPage";
-import SecretViewPage from "./pages/SecretViewPage";
-import TransferPage from "./pages/TransferPage";
-import TransferDownloadPage from "./pages/TransferDownloadPage";
+import ImagePage from "./pages/Image";
+import FontPage from "./pages/Font";
+import FaviconPage from "./pages/Favicon";
+import QrPage from "./pages/Qr";
+import ToolsPage from "./pages/Tools";
+import LoginPage from "./pages/Login";
+import ChangePasswordPage from "./pages/ChangePassword";
+import AdminUsersPage from "./pages/AdminUsers";
+import SecretPage from "./pages/Secret";
+import SecretViewPage from "./pages/SecretView";
+import TransferPage from "./pages/Transfer";
+import TransferDownloadPage from "./pages/TransferDownload";
 
 // The JSON page is lazy-loaded because CodeMirror is heavy.
-const JsonTsPage = lazy(() => import("./pages/JsonTsPage"));
+const JsonTsPage = lazy(() => import("./pages/JsonTs"));
 // The playground pulls in ws / socket.io / signalr clients — keep it out of
 // the main bundle.
-const PlaygroundPage = lazy(() => import("./pages/PlaygroundPage"));
+const PlaygroundPage = lazy(() => import("./pages/Playground"));
 
 export default function App() {
   return (

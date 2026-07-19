@@ -5,7 +5,7 @@ import { ApiError } from "@/services/result";
 import { changePasswordSchema } from "@/schemas/auth.schema";
 import { useI18n } from "@/i18n";
 import { Button, Field, PageIntro, Alert } from "@/components/ui";
-import styles from "./Auth.module.scss";
+import styles from "./styles.module.scss";
 
 // Forced first-login password change. Reused as a normal change-password form
 // too, but the flow lands here automatically while mustChangePassword is set.

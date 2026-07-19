@@ -7,7 +7,7 @@ import { convertFont } from "@/services/font.service";
 import { useI18n } from "@/i18n";
 import { FONT_FORMATS, type FontFormat } from "@/types";
 import { Panel, Columns, Field, Chips, PageIntro, Alert } from "@/components/ui";
-import styles from "./ToolPage.module.scss";
+import styles from "./styles.module.scss";
 
 const ACCEPTED = [".ttf", ".otf", ".woff", ".woff2"];
 
