@@ -1,0 +1,144 @@
+@use "../../../styles/mixins" as *;
+
+.io {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.outHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  > span {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+}
+
+.note {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.codeArea {
+  @include code-surface;
+  min-height: 130px;
+  resize: vertical;
+}
+
+// ---- Side-by-side (JSON) ----
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.colHead {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+
+  &.between {
+    justify-content: space-between;
+  }
+}
+
+.splitArea {
+  height: 200px;
+  min-height: 200px;
+}
+
+// ---- Diff ----
+.diffInputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.diffStats {
+  display: flex;
+  gap: 16px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.added {
+  color: var(--good);
+}
+.removed {
+  color: var(--bad);
+}
+
+.diffView {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: auto;
+  background: #0d0f14;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  max-height: 460px;
+}
+
+.diffRow {
+  display: grid;
+  grid-template-columns: 42px 1fr 42px 1fr;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.gutter {
+  text-align: right;
+  padding: 0 8px;
+  color: #5b616e;
+  background: rgba(255, 255, 255, 0.02);
+  user-select: none;
+}
+
+.cell {
+  padding: 0 10px;
+}
+.cellLeft {
+  border-right: 1px solid var(--border);
+}
+
+.del .cellLeft {
+  background: rgba(248, 113, 113, 0.16);
+}
+.ins .cellRight {
+  background: rgba(52, 211, 153, 0.16);
+}
+.mod .cellLeft {
+  background: rgba(248, 113, 113, 0.16);
+}
+.mod .cellRight {
+  background: rgba(52, 211, 153, 0.16);
+}
+
+@media (max-width: 640px) {
+  .split,
+  .diffInputs {
+    grid-template-columns: 1fr;
+  }
+}

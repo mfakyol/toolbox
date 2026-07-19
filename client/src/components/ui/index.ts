@@ -13,4 +13,6 @@ export { Progress } from "./Progress";
 export { Checkbox } from "./Checkbox";
 export { Segmented } from "./Segmented";
 export { SubNav } from "./SubNav";
-export { CodeEditor } from "./CodeEditor";
+// CodeEditor is intentionally NOT re-exported here: it pulls in CodeMirror
+// (~500 kB). Import it directly from "@/components/ui/CodeEditor" so it stays in
+// the lazy-loaded JSON-page chunk instead of the shared (eager) barrel.

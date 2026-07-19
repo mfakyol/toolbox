@@ -1,0 +1,52 @@
+@use "../../../styles/mixins" as *;
+
+.btn {
+  @include btn-base;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+}
+
+.primary {
+  color: #fff;
+  background: var(--gradient);
+  box-shadow: 0 6px 16px -8px var(--accent);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px -10px var(--accent);
+  }
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.ghost {
+  color: var(--text-2);
+  background: var(--panel-2);
+  border-color: var(--border);
+
+  &:hover:not(:disabled) {
+    color: var(--text);
+    border-color: var(--border-strong);
+    background: var(--panel-3);
+  }
+}
+
+.success {
+  color: #05240f;
+  background: var(--good);
+  font-weight: 700;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.05);
+  }
+}
+
+.sm {
+  padding: 8px 14px;
+  font-size: 0.85rem;
+}
+
+.block {
+  width: 100%;
+}

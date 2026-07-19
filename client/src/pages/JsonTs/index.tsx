@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { jsonToTypescript, type DeclStyle } from "@/utils/jsonToTs";
 import { useI18n } from "@/i18n";
-import { Panel, Field, Button, Alert, PageIntro, CodeEditor } from "@/components/ui";
+import { Panel, Field, Button, Alert, PageIntro } from "@/components/ui";
+import { CodeEditor } from "@/components/ui/CodeEditor";
 import styles from "./styles.module.scss";
 
 const SAMPLE = JSON.stringify(
