@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "./layouts/MainLayout";
 import { RequireAuth, RequireAdmin } from "./layouts/guards";
 import ImagePage from "./pages/Image";
@@ -40,7 +40,8 @@ export default function App() {
             <Route path="font" element={<FontPage />} />
             <Route path="favicon" element={<FaviconPage />} />
             <Route path="qr" element={<QrPage />} />
-            <Route path="tools" element={<ToolsPage />} />
+            <Route path="tools/:tool" element={<ToolsPage />} />
+            <Route path="tools" element={<Navigate to="/tools/base64" replace />} />
             <Route path="secret" element={<SecretPage />} />
             <Route path="transfer" element={<TransferPage />} />
             <Route

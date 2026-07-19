@@ -1,22 +1,19 @@
 @use "../../../styles/mixins" as *;
 
+// Base matches the input/select box (same vertical padding + font-size + border)
+// so buttons line up with form controls placed beside them.
 .btn {
   @include btn-base;
-  padding: 12px 18px;
-  font-size: 0.95rem;
+  padding: 9px 14px;
+  font-size: 0.875rem;
 }
 
 .primary {
   color: #fff;
-  background: var(--gradient);
-  box-shadow: 0 6px 16px -8px var(--accent);
+  background: var(--accent);
 
   &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 22px -10px var(--accent);
-  }
-  &:active:not(:disabled) {
-    transform: translateY(0);
+    background: var(--accent-hover);
   }
 }
 
@@ -35,7 +32,7 @@
 .success {
   color: #05240f;
   background: var(--good);
-  font-weight: 700;
+  font-weight: 600;
 
   &:hover:not(:disabled) {
     filter: brightness(1.05);
@@ -43,8 +40,8 @@
 }
 
 .sm {
-  padding: 8px 14px;
-  font-size: 0.85rem;
+  padding: 6px 11px;
+  font-size: 0.8rem;
 }
 
 .block {

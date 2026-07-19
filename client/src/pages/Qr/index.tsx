@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode";
 import { useI18n } from "@/i18n";
-import { Panel, Field, PageIntro, LinkButton } from "@/components/ui";
+import { Panel, Field, PageIntro, LinkButton, Select } from "@/components/ui";
 import styles from "./styles.module.scss";
 
 type Ecc = "L" | "M" | "Q" | "H";
@@ -113,13 +113,13 @@ export default function QrPage() {
           </Field>
 
           <Field label={t("qr.ecc")}>
-            <select value={ecc} onChange={(e) => setEcc(e.target.value as Ecc)}>
+            <Select value={ecc} onChange={(e) => setEcc(e.target.value as Ecc)}>
               {ECC_LEVELS.map((level) => (
                 <option key={level.id} value={level.id}>
                   {t(`qr.ecc${level.id}`)} · {level.pct}
                 </option>
               ))}
-            </select>
+            </Select>
           </Field>
           <p className={styles.hint}>{t("qr.eccHint")}</p>
 

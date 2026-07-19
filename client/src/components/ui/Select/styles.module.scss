@@ -1,0 +1,24 @@
+@use "../../../styles/mixins" as *;
+
+.wrap {
+  position: relative;
+  display: block;
+}
+
+.select {
+  @include input;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+.chevron {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--muted);
+  font-size: 0.7rem;
+}

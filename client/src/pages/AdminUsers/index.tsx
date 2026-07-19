@@ -4,7 +4,7 @@ import type { AuthUser, Role } from "@/services/auth.service";
 import { useAuth } from "@/stores/auth.store";
 import { createUserSchema } from "@/schemas/auth.schema";
 import { useI18n } from "@/i18n";
-import { Button, Field, Badge, Alert } from "@/components/ui";
+import { Button, Field, Badge, Alert, Select } from "@/components/ui";
 import styles from "./styles.module.scss";
 
 export default function AdminUsersPage() {
@@ -70,8 +70,6 @@ export default function AdminUsersPage() {
 
   return (
     <div>
-      <h2 className={styles.title}>{t("admin.title")}</h2>
-
       <form className={styles.form} onSubmit={onCreate}>
         <h3>{t("admin.newUser")}</h3>
         <div className={styles.formRow}>
@@ -92,10 +90,10 @@ export default function AdminUsersPage() {
             />
           </Field>
           <Field label={t("admin.role")}>
-            <select value={role} onChange={(e) => setRole(e.target.value as Role)}>
+            <Select value={role} onChange={(e) => setRole(e.target.value as Role)}>
               <option value="user">{t("admin.roleUser")}</option>
               <option value="admin">{t("admin.roleAdmin")}</option>
-            </select>
+            </Select>
           </Field>
         </div>
 
@@ -107,7 +105,8 @@ export default function AdminUsersPage() {
         </Button>
       </form>
 
-      <table className={styles.table}>
+      <div className={styles.tableWrap}>
+        <table className={styles.table}>
         <thead>
           <tr>
             <th>{t("admin.emailCol")}</th>
@@ -143,7 +142,8 @@ export default function AdminUsersPage() {
             </tr>
           ))}
         </tbody>
-      </table>
+        </table>
+      </div>
     </div>
   );
 }

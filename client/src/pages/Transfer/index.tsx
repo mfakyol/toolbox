@@ -16,6 +16,7 @@ import {
   PageIntro,
   Dropzone,
   DropzoneHint,
+  Select,
   type BadgeTone,
 } from "@/components/ui";
 import styles from "./styles.module.scss";
@@ -179,13 +180,13 @@ export default function TransferPage() {
 
           <div className={styles.formRow}>
             <Field label={t("secret.ttl")}>
-              <select value={ttl} onChange={(e) => setTtl(Number(e.target.value))}>
+              <Select value={ttl} onChange={(e) => setTtl(Number(e.target.value))}>
                 {Object.entries(TTL_KEYS).map(([sec, key]) => (
                   <option key={sec} value={sec}>
                     {t(key)}
                   </option>
                 ))}
-              </select>
+              </Select>
             </Field>
             <Field label={t("secret.passphrase")}>
               <input

@@ -1,52 +1,53 @@
-// Design tokens. Exposed as CSS custom properties (themeable at runtime) and
-// mirrored as Sass variables/mixins-friendly values for use inside modules.
-// Refined dark theme: deeper background, calmer surfaces, clearer borders,
-// a proper elevation + radius + spacing scale.
+// Design tokens — Linear-inspired: near-black neutral surfaces, a single calm
+// indigo accent, thin low-contrast borders, tight radii, minimal elevation.
+// Exposed as CSS custom properties (themeable) and mirrored as Sass breakpoints.
 
 :root {
   // ---- Surfaces ----
-  --bg: #0a0c11;
-  --bg-elevated: #0e1116;
-  --panel: #141821;
-  --panel-2: #1a1f2a;
-  --panel-3: #202634;
+  --bg: #08090a;
+  --bg-elevated: #0e0f11;
+  --panel: #101113;
+  --panel-2: #17181b;
+  --panel-3: #1e2024;
 
-  // ---- Lines ----
-  --border: #232937;
-  --border-strong: #313949;
+  // ---- Lines ---- (subtle, low-contrast)
+  --border: #202225;
+  --border-strong: #2c2e33;
 
   // ---- Text ----
-  --text: #eef1f6;
-  --text-2: #c3cad6;
-  --muted: #8a93a4;
-  --faint: #5b6373;
+  --text: #f7f8f8;
+  --text-2: #d0d3d9;
+  --muted: #8a8f98;
+  --faint: #62666d;
 
-  // ---- Brand / accent ----
-  --accent: #6366f1;
-  --accent-2: #8b5cf6;
-  --accent-hover: #7c7ff4;
-  --accent-soft: rgba(99, 102, 241, 0.14);
-  --accent-text: #b9bffb;
-  --gradient: linear-gradient(135deg, var(--accent), var(--accent-2));
+  // ---- Brand / accent ---- (single, restrained — no gradient)
+  --accent: #5e6ad2;
+  --accent-2: #5e6ad2;
+  --accent-hover: #6f7ae0;
+  --accent-soft: rgba(94, 106, 210, 0.14);
+  --accent-text: #a3aaea;
+  // Kept as a var so existing `var(--gradient)` usages resolve — collapsed to a
+  // flat accent so nothing renders a gradient anymore.
+  --gradient: var(--accent);
 
-  // ---- Status ----
-  --good: #34d399;
-  --good-soft: rgba(52, 211, 153, 0.12);
-  --bad: #f87171;
-  --bad-soft: rgba(248, 113, 113, 0.12);
-  --warn: #fbbf24;
+  // ---- Status ---- (muted, not neon)
+  --good: #4cc38a;
+  --good-soft: rgba(76, 195, 138, 0.12);
+  --bad: #e5484d;
+  --bad-soft: rgba(229, 72, 77, 0.12);
+  --warn: #f5b544;
 
-  // ---- Radius ----
-  --radius-sm: 9px;
-  --radius: 13px;
-  --radius-lg: 18px;
+  // ---- Radius ---- (tight)
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-lg: 10px;
   --radius-pill: 999px;
 
-  // ---- Elevation ----
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.55);
-  --shadow-lg: 0 18px 50px -16px rgba(0, 0, 0, 0.65);
-  --ring: 0 0 0 3px rgba(99, 102, 241, 0.35);
+  // ---- Elevation ---- (minimal)
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 10px 34px rgba(0, 0, 0, 0.4);
+  --ring: 0 0 0 3px rgba(94, 106, 210, 0.32);
 
   // ---- Typography ----
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -56,7 +57,7 @@
 
   // ---- Motion ----
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
-  --dur: 0.16s;
+  --dur: 0.15s;
 }
 
 // Sass-side mirrors for use in module math / breakpoints.
