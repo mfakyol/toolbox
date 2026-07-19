@@ -12,3 +12,8 @@ structural or security decisions.
 - [`PROJECT-toolbox.md`](PROJECT-toolbox.md) — decisions unique to this repo
   (auth model & kill-switch, one-time secret / file-transfer internals, topology,
   client shape, follow-ups).
+
+## How to work here
+- [`WORKING-AGREEMENTS.md`](WORKING-AGREEMENTS.md) — process rules from owner
+  feedback (scope, commits, docs-are-standards, config accuracy). Read before
+  editing or committing.
