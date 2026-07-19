@@ -7,3 +7,6 @@ server/uploads/*
 
 # Secrets — never commit the real env file
 .env
+
+# Local-only dev bootstrap (in-memory Mongo) — not for the repo
+server/dev-mongo.mjs
