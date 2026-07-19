@@ -26,8 +26,9 @@ File Transfer, and a WebSocket/Socket.IO/SignalR test Playground.
 
 ## Auth model (the spine of the app)
 - Session-based (Passport local + `connect-mongo`), cookie `toolbox.sid`,
-  `httpOnly` + `sameSite: lax`, `Secure` in prod. `app.set("trust proxy", true)`
-  in prod so forwarded headers are trusted.
+  `httpOnly` + `sameSite: lax`, `Secure` in prod. In prod `trust proxy` is set to a
+  fixed hop count (`2` = host nginx → container nginx) — not `true` — so a client
+  can't spoof `X-Forwarded-For` (which also keys the rate limiter).
 - **No public registration.** An admin seeds the first admin on startup
   (`config/seedAdmin`) from env; admins create accounts; every new account has
   `mustChangePassword` and is forced through `/change-password` before any tool
@@ -65,13 +66,33 @@ tool routes (convert/font/favicon).
 - Image (Sharp), font (fontverter), favicon (png-to-ico) conversions run in the
   service layer, decoupled from Express and unit-tested without req/res.
 - Upload size capped by multer (`MAX_FILE_SIZE`, 25 MB for tool uploads).
+- Conversion endpoints have their own `express-rate-limit` (`conversionLimiter`),
+  separate from the auth limiter, since each request does heavy native work.
+
+## Security & validation (server)
+- **helmet** on every response (CSP left to the nginx host — this API is JSON only;
+  HSTS in prod). **CORS** is locked to explicit origin(s) with credentials — never
+  `*` — parsed from `CORS_ORIGIN` (comma-separated allowed).
+- **Rate limiting** (`middleware/rateLimit.ts`): `authLimiter` on login /
+  change-password (keyed per IP+email, failed attempts only) and `conversionLimiter`
+  on convert/font/favicon.
+- **Request validation** (`middleware/validate.ts` + `schemas/`): one `validateBody(schema)`
+  middleware, Zod DTOs per feature; controllers trust the parsed body. Business
+  invariants (TTL whitelist, ownership) still live in the services.
+- **Errors are typed codes** (`errors/messages.ts`, `errors/AppError.ts`): every
+  `AppError` carries a stable `code`; the handler returns `{ error, code }` (English
+  `error` is a fallback). The client maps `code` → its own EN/DE/TR i18n. Mongo
+  dup-key → 409, invalid ObjectId → clean 404, Multer size → 413.
+- **Graceful shutdown** (`index.ts`): SIGTERM/SIGINT drain the server + close Mongo,
+  with a force-exit timeout. `/health` returns 503 when the DB isn't connected.
 
 ## Data / env
 - MongoDB via Mongoose. Models: `User`, `Secret`, `Transfer`.
 - All env is read only in `config/index.ts` (nothing else touches `process.env`).
-  Prod compose **fails fast** if `DOMAIN`, `SESSION_SECRET`,
-  `SECRET_ENCRYPTION_KEY`, `ADMIN_PASSWORD` are missing. Defaults exist for local
-  dev (`change-me-*`) — **set real values in production.**
+  The **app itself fails fast** at startup in production if `SESSION_SECRET`,
+  `SECRET_ENCRYPTION_KEY`, `ADMIN_PASSWORD` are still the insecure defaults or
+  `CORS_ORIGIN` is `*` (not just the compose file). Defaults exist for local dev
+  (`change-me-*`) — **set real values in production.**
 
 ## Client shape (specifics)
 Conforms to `frontend-structure.md`. Layout: `pages/`, `layouts/` (`MainLayout` +
@@ -107,15 +128,25 @@ route `guards`), `components/ui/` (primitives, incl. `CodeEditor`) and
 ## Conventions for this repo/owner
 - **Do not add a `Co-Authored-By` trailer** to commits (owner preference).
 - Prefer small, single-concern commits.
-- Server-facing user error strings are Turkish (see `errorHandler`/`AppError`);
-  client-facing copy goes through i18n.
+- User-facing errors are **error codes**, not prose: server throws
+  `new AppError("CODE", status)` and the client translates the code. When adding an
+  error, add the code to server `errors/messages.ts` and a matching `error.<CODE>`
+  key in the client's EN/DE/TR `i18n/translations.ts`. Server `console.*` logs stay
+  Turkish (operator-facing, never returned to clients).
+- Server layering (`backend-file-structure.md`): entry is `src/index.ts`
+  (composition root) + `src/app.ts` (builds the app); `AppError` lives in `errors/`;
+  tests in `server/test/` mirror `src/`. Lower layers never import higher ones
+  (e.g. the on-disk path helper is in `utils/storage.ts`, not middleware).
 
 ## Open follow-ups (not yet done)
-Client conforms to `frontend-structure.md`; the remaining gaps are all server-side
-(see `nodejs-backend-security.md`):
-- Adopt the shared standards where the server still diverges: `zod` request
-  validation at the boundary, `helmet` + locked CORS (currently `corsOrigin`
-  defaults to `*`), and rate limiting on auth/expensive endpoints.
+Both apps now conform to the shared standards (helmet, locked CORS, rate limiting,
+Zod validation, typed error codes, prod fail-fast, graceful shutdown, `test/`
+layout are all done). Remaining:
 - Move CPU-bound conversions to `worker_threads` with a wall-clock timeout (DoS
   hardening) so a single request can't block the event loop.
 - Structured logging (pino) instead of `console.*` on the server.
+- Route-level integration tests (supertest + `mongodb-memory-server`) — the layout
+  is ready under `server/test/`; not wired yet.
+- Per-field i18n for server validation errors: `validateBody` failures currently
+  collapse to one `VALIDATION_ERROR` code (the client validates per-field before
+  submit, so this is only the server-side backstop).
