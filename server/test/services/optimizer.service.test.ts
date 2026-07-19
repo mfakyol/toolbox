@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import sharp from "sharp";
-import { optimizeImage } from "./optimizer.service.js";
-import { AppError } from "../utils/AppError.js";
+import { optimizeImage } from "../../src/services/optimizer.service.js";
+import { AppError } from "../../src/errors/AppError.js";
 
 // Produces a flat-color sample image for tests.
 function sampleImage(width = 100, height = 80): Promise<Buffer> {

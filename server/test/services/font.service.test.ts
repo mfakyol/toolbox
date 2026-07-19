@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { convertFont } from "./font.service.js";
-import { AppError } from "../utils/AppError.js";
+import { convertFont } from "../../src/services/font.service.js";
+import { AppError } from "../../src/errors/AppError.js";
 
 test("throws AppError on an invalid font buffer", async () => {
   const garbage = Buffer.from("not a real font");
