@@ -72,7 +72,7 @@ export default function SocketIoTester() {
       <div className={styles.reqRow}>
         <input
           className={styles.url}
-          placeholder="https://…"
+          placeholder={t("play.urlPlaceholder")}
           value={url}
           disabled={status !== "closed"}
           onChange={(e) => setUrl(e.target.value)}

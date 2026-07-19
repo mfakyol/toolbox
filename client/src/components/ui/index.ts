@@ -13,3 +13,4 @@ export { Progress } from "./Progress";
 export { Checkbox } from "./Checkbox";
 export { Segmented } from "./Segmented";
 export { SubNav } from "./SubNav";
+export { CodeEditor } from "./CodeEditor";

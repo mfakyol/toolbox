@@ -95,7 +95,7 @@ export default function SignalRTester() {
       <div className={styles.reqRow}>
         <input
           className={styles.url}
-          placeholder="https://…/hub"
+          placeholder={t("play.hubUrlPlaceholder")}
           value={url}
           disabled={status !== "closed"}
           onChange={(e) => setUrl(e.target.value)}
@@ -115,7 +115,7 @@ export default function SignalRTester() {
       <Field label={t("play.signalrListen")}>
         <input
           className={styles.url}
-          placeholder="ReceiveMessage, Notify"
+          placeholder={t("play.methodsPlaceholder")}
           value={listen}
           disabled={status !== "closed"}
           onChange={(e) => setListen(e.target.value)}

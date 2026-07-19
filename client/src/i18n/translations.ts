@@ -183,6 +183,10 @@ export const translations: Record<Lang, Record<string, string>> = {
     "play.wsNote":
       "Bağlantı doğrudan tarayıcından kurulur. HTTPS sayfadan yalnızca wss:// adreslerine bağlanabilirsin.",
     "play.send": "Gönder",
+    "play.urlPlaceholder": "https://…",
+    "play.wsUrlPlaceholder": "wss://…",
+    "play.hubUrlPlaceholder": "https://…/hub",
+    "play.methodsPlaceholder": "ReceiveMessage, Notify",
     "play.sending": "Gönderiliyor…",
     "play.headers": "Header'lar",
     "play.headerKey": "Ad",
@@ -504,6 +508,10 @@ export const translations: Record<Lang, Record<string, string>> = {
     "play.wsNote":
       "Die Verbindung wird direkt im Browser aufgebaut. Von einer HTTPS-Seite sind nur wss://-Adressen erlaubt.",
     "play.send": "Senden",
+    "play.urlPlaceholder": "https://…",
+    "play.wsUrlPlaceholder": "wss://…",
+    "play.hubUrlPlaceholder": "https://…/hub",
+    "play.methodsPlaceholder": "ReceiveMessage, Notify",
     "play.sending": "Senden…",
     "play.headers": "Header",
     "play.headerKey": "Name",
@@ -824,6 +832,10 @@ export const translations: Record<Lang, Record<string, string>> = {
     "play.wsNote":
       "The connection is opened directly in your browser. From an HTTPS page only wss:// addresses are allowed.",
     "play.send": "Send",
+    "play.urlPlaceholder": "https://…",
+    "play.wsUrlPlaceholder": "wss://…",
+    "play.hubUrlPlaceholder": "https://…/hub",
+    "play.methodsPlaceholder": "ReceiveMessage, Notify",
     "play.sending": "Sending…",
     "play.headers": "Headers",
     "play.headerKey": "Name",

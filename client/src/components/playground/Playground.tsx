@@ -166,7 +166,7 @@ export function HttpTester() {
         </select>
         <input
           className={styles.url}
-          placeholder="https://…"
+          placeholder={t("play.urlPlaceholder")}
           value={url}
           onChange={(e) => setUrl(e.target.value)}
         />
@@ -303,7 +303,7 @@ export function WsTester() {
       <div className={styles.reqRow}>
         <input
           className={styles.url}
-          placeholder="wss://…"
+          placeholder={t("play.wsUrlPlaceholder")}
           value={url}
           disabled={status !== "closed"}
           onChange={(e) => setUrl(e.target.value)}
