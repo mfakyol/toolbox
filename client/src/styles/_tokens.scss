@@ -1,66 +1,64 @@
-// Design tokens — Linear-inspired: near-black neutral surfaces, a single calm
-// indigo accent, thin low-contrast borders, tight radii, minimal elevation.
-// Exposed as CSS custom properties (themeable) and mirrored as Sass breakpoints.
-
 :root {
-  // ---- Surfaces ----
   --bg: #08090a;
   --bg-elevated: #0e0f11;
   --panel: #101113;
   --panel-2: #17181b;
   --panel-3: #1e2024;
 
-  // ---- Lines ---- (subtle, low-contrast)
   --border: #202225;
   --border-strong: #2c2e33;
 
-  // ---- Text ----
   --text: #f7f8f8;
   --text-2: #d0d3d9;
   --muted: #8a8f98;
   --faint: #62666d;
 
-  // ---- Brand / accent ---- (single, restrained — no gradient)
   --accent: #5e6ad2;
   --accent-2: #5e6ad2;
   --accent-hover: #6f7ae0;
   --accent-soft: rgba(94, 106, 210, 0.14);
   --accent-text: #a3aaea;
-  // Kept as a var so existing `var(--gradient)` usages resolve — collapsed to a
-  // flat accent so nothing renders a gradient anymore.
   --gradient: var(--accent);
 
-  // ---- Status ---- (muted, not neon)
   --good: #4cc38a;
   --good-soft: rgba(76, 195, 138, 0.12);
   --bad: #e5484d;
   --bad-soft: rgba(229, 72, 77, 0.12);
   --warn: #f5b544;
 
-  // ---- Radius ---- (tight)
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+
+  --control-py: 9px;
+  --control-px: 12px;
+  --control-fs: 0.875rem;
+  --control-py-sm: 6px;
+  --control-fs-sm: 0.8rem;
+
   --radius-sm: 6px;
   --radius: 8px;
   --radius-lg: 10px;
   --radius-pill: 999px;
 
-  // ---- Elevation ---- (minimal)
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
   --shadow-lg: 0 10px 34px rgba(0, 0, 0, 0.4);
   --ring: 0 0 0 3px rgba(94, 106, 210, 0.32);
 
-  // ---- Typography ----
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono",
     Menlo, Consolas, monospace;
 
-  // ---- Motion ----
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --dur: 0.15s;
 }
 
-// Sass-side mirrors for use in module math / breakpoints.
 $bp-sm: 560px;
 $bp-md: 780px;
 $bp-lg: 1000px;

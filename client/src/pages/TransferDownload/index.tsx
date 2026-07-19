@@ -5,7 +5,15 @@ import type { TransferSummary } from "@/services/transfer.service";
 import { formatBytes } from "@/utils/format";
 import { useAuth } from "@/stores/auth.store";
 import { useI18n } from "@/i18n";
-import { Panel, Field, Button, LinkButton, Alert, PageIntro } from "@/components/ui";
+import { PublicHeader } from "@/layouts/PublicHeader";
+import {
+  Panel,
+  Field,
+  Button,
+  LinkButton,
+  Alert,
+  PageIntro,
+} from "@/components/ui";
 import styles from "./styles.module.scss";
 
 export default function TransferDownloadPage() {
@@ -34,7 +42,10 @@ export default function TransferDownloadPage() {
     setDownloadError(null);
     setDownloading(true);
     // Validate access first, then hand off to a native browser download.
-    const res = await transferApi.verifyTransfer(token, passphrase || undefined);
+    const res = await transferApi.verifyTransfer(
+      token,
+      passphrase || undefined,
+    );
     setDownloading(false);
     if (!res.success) {
       setDownloadError(te(res.code, res.error));
@@ -42,18 +53,21 @@ export default function TransferDownloadPage() {
     }
     window.location.href = transferApi.transferDownloadUrl(
       token,
-      passphrase || undefined
+      passphrase || undefined,
     );
   }
 
   function Frame({ children }: { children: React.ReactNode }) {
     return (
-      <div className={styles.wrap}>
-        <Panel className={styles.card}>
-          <h2 className={styles.title}>{t("transfer.viewTitle")}</h2>
-          {children}
-        </Panel>
-      </div>
+      <>
+        <PublicHeader />
+        <div className={styles.wrap}>
+          <Panel className={styles.card}>
+            <h2 className={styles.title}>{t("transfer.viewTitle")}</h2>
+            {children}
+          </Panel>
+        </div>
+      </>
     );
   }
 
@@ -76,7 +90,9 @@ export default function TransferDownloadPage() {
 
   return (
     <Frame>
-      {transfer.message && <p className={styles.viewMessage}>{transfer.message}</p>}
+      {transfer.message && (
+        <p className={styles.viewMessage}>{transfer.message}</p>
+      )}
 
       <div className={styles.filelist}>
         <ul className={styles.list}>

@@ -58,6 +58,8 @@ export default function SecretPage() {
 
   useEffect(() => {
     refresh();
+    // Load history once on mount; intentionally not re-run on refresh identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function onSubmit(e: FormEvent) {

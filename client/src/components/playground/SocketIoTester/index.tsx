@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { io, type Socket } from "socket.io-client";
 import { useI18n } from "@/i18n";
-import { useLog, LogView, parseMaybeJson } from "./Playground";
+import { useLog, LogView, parseMaybeJson } from "../Playground";
 import { Button, Badge, Field, type BadgeTone } from "@/components/ui";
-import styles from "./Playground.module.scss";
+import styles from "../Playground/styles.module.scss";
 
 // Socket.IO tester. Loaded lazily so socket.io-client stays out of the main
 // bundle and only downloads when this tab is opened.

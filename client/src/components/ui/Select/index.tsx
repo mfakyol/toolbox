@@ -7,8 +7,6 @@ interface SelectProps
   children: ReactNode;
 }
 
-// Native <select> with consistent styling (matches the input/button box height)
-// and a custom chevron so it looks the same across browsers/OSes.
 export function Select({ className, children, ...rest }: SelectProps) {
   return (
     <div className={styles.wrap}>

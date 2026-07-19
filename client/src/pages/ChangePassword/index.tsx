@@ -4,6 +4,7 @@ import { useAuth } from "@/stores/auth.store";
 import { ApiError } from "@/services/result";
 import { changePasswordSchema } from "@/schemas/auth.schema";
 import { useI18n } from "@/i18n";
+import { PublicHeader } from "@/layouts/PublicHeader";
 import { Button, Field, PageIntro, Alert } from "@/components/ui";
 import styles from "./styles.module.scss";
 
@@ -48,9 +49,11 @@ export default function ChangePasswordPage() {
   }
 
   return (
-    <div className={styles.wrap}>
-      <form className={styles.card} onSubmit={onSubmit}>
-        <h2 className={styles.title}>{t("auth.changeTitle")}</h2>
+    <>
+      <PublicHeader />
+      <div className={styles.wrap}>
+        <form className={styles.card} onSubmit={onSubmit}>
+          <h2 className={styles.title}>{t("auth.changeTitle")}</h2>
         <PageIntro>{t("auth.changeSub")}</PageIntro>
 
         <Field label={t("auth.currentPassword")}>
@@ -88,7 +91,8 @@ export default function ChangePasswordPage() {
         <Button type="submit" block disabled={busy}>
           {busy ? t("auth.saving") : t("auth.save")}
         </Button>
-      </form>
-    </div>
+        </form>
+      </div>
+    </>
   );
 }

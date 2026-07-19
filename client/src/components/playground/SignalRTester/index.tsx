@@ -5,9 +5,9 @@ import {
   HubConnectionState,
 } from "@microsoft/signalr";
 import { useI18n } from "@/i18n";
-import { useLog, LogView } from "./Playground";
+import { useLog, LogView } from "../Playground";
 import { Button, Badge, Field, type BadgeTone } from "@/components/ui";
-import styles from "./Playground.module.scss";
+import styles from "../Playground/styles.module.scss";
 
 // SignalR tester. Loaded lazily so @microsoft/signalr stays out of the main
 // bundle. Unlike Socket.IO, SignalR has no catch-all listener, so the user
@@ -66,7 +66,7 @@ export default function SignalRTester() {
     const conn = connRef.current;
     if (conn?.state !== HubConnectionState.Connected || !method.trim()) return;
 
-    let parsedArgs: unknown[] = [];
+    let parsedArgs: unknown[];
     try {
       const p = JSON.parse(args || "[]");
       parsedArgs = Array.isArray(p) ? p : [p];

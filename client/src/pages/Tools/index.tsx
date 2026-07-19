@@ -10,8 +10,6 @@ import {
 } from "@/components/devtools/DevTools";
 import { Panel } from "@/components/ui";
 
-// Each dev tool is its own route (/tools/<id>); this thin page renders the one
-// named by the URL param. The sidebar links to each individually.
 const TOOLS = {
   base64: Base64Tool,
   url: UrlTool,

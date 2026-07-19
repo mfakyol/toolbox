@@ -60,6 +60,8 @@ export default function TransferPage() {
 
   useEffect(() => {
     refresh();
+    // Load history once on mount; intentionally not re-run on refresh identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function addFiles(list: FileList | File[]) {

@@ -5,6 +5,7 @@ import type { SecretMeta } from "@/services/secret.service";
 import { CopyButton } from "@/components/CopyButton";
 import { useAuth } from "@/stores/auth.store";
 import { useI18n } from "@/i18n";
+import { PublicHeader } from "@/layouts/PublicHeader";
 import { Panel, Field, Button, LinkButton, Alert, PageIntro } from "@/components/ui";
 import styles from "./styles.module.scss";
 
@@ -45,12 +46,15 @@ export default function SecretViewPage() {
 
   function Frame({ children }: { children: React.ReactNode }) {
     return (
-      <div className={styles.wrap}>
-        <Panel className={styles.card}>
-          <h2 className={styles.title}>{t("secret.viewTitle")}</h2>
-          {children}
-        </Panel>
-      </div>
+      <>
+        <PublicHeader />
+        <div className={styles.wrap}>
+          <Panel className={styles.card}>
+            <h2 className={styles.title}>{t("secret.viewTitle")}</h2>
+            {children}
+          </Panel>
+        </div>
+      </>
     );
   }
 

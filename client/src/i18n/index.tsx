@@ -93,6 +93,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 }
 
 // Translation hook: const { t, lang, setLang } = useI18n();
+// Colocated with its provider by design (a shared i18n module, not a route file).
+// eslint-disable-next-line react-refresh/only-export-components
 export function useI18n(): I18nContextValue {
   const ctx = useContext(I18nContext);
   if (!ctx) throw new Error("useI18n must be used within I18nProvider.");

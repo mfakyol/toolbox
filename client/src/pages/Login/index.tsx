@@ -4,11 +4,12 @@ import { useAuth } from "@/stores/auth.store";
 import { ApiError } from "@/services/result";
 import { loginSchema } from "@/schemas/auth.schema";
 import { useI18n } from "@/i18n";
+import { PublicHeader } from "@/layouts/PublicHeader";
 import { Button, Field, PageIntro, Alert, Checkbox } from "@/components/ui";
 import styles from "./styles.module.scss";
 
 export default function LoginPage() {
-  const { user, loading, authRequired, login } = useAuth();
+  const { user, loading, login } = useAuth();
   const { t, te } = useI18n();
 
   const [email, setEmail] = useState("");
@@ -17,9 +18,8 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  // Auth disabled → there is no login; send everyone to the app.
-  if (!loading && !authRequired) return <Navigate to="/" replace />;
-
+  // Login stays reachable even when auth is optional (authRequired === false) —
+  // a user may still choose to log in. Only an already-logged-in user is bounced.
   // Already logged in → bounce to the app (or the forced password change).
   if (!loading && user) {
     return <Navigate to={user.mustChangePassword ? "/change-password" : "/"} replace />;
@@ -47,9 +47,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className={styles.wrap}>
-      <form className={styles.card} onSubmit={onSubmit}>
-        <h2 className={styles.title}>{t("auth.loginTitle")}</h2>
+    <>
+      <PublicHeader />
+      <div className={styles.wrap}>
+        <form className={styles.card} onSubmit={onSubmit}>
+          <h2 className={styles.title}>{t("auth.loginTitle")}</h2>
         <PageIntro>{t("auth.loginSub")}</PageIntro>
 
         <Field label={t("auth.email")}>
@@ -81,7 +83,8 @@ export default function LoginPage() {
         <Button type="submit" block disabled={busy}>
           {busy ? t("auth.loggingIn") : t("auth.login")}
         </Button>
-      </form>
-    </div>
+        </form>
+      </div>
+    </>
   );
 }

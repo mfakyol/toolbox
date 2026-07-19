@@ -3,7 +3,7 @@ import { useI18n } from "@/i18n";
 import { CopyButton } from "@/components/CopyButton";
 import { formatBytes } from "@/utils/format";
 import { Button, Badge, Field, Alert, type BadgeTone } from "@/components/ui";
-import styles from "./Playground.module.scss";
+import styles from "./styles.module.scss";
 
 // ---- Shared log helpers (reused by the WS / Socket.IO / SignalR testers) ----
 export type LogDir = "in" | "out" | "sys";
@@ -13,6 +13,8 @@ export interface LogEntry {
   time: string;
 }
 
+// Shared log helpers colocated with the log component, reused by the testers.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useLog() {
   const [log, setLog] = useState<LogEntry[]>([]);
   const push = useCallback((dir: LogDir, text: string) => {
@@ -49,6 +51,7 @@ export function LogView({ log, empty }: { log: LogEntry[]; empty: string }) {
 }
 
 // Parses a string as JSON, falling back to the raw string.
+// eslint-disable-next-line react-refresh/only-export-components
 export function parseMaybeJson(raw: string): unknown {
   const s = raw.trim();
   if (!s) return undefined;

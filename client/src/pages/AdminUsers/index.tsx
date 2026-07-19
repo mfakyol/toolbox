@@ -30,6 +30,8 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     refresh();
+    // Load the user list once on mount; intentionally not re-run on refresh identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function onCreate(e: FormEvent) {
