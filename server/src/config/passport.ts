@@ -11,7 +11,8 @@ export function configurePassport(): void {
         try {
           const user = await User.findOne({ email: email.toLowerCase().trim() });
           if (!user || !(await verifyPassword(password, user.passwordHash))) {
-            return done(null, false, { message: "E-posta veya şifre hatalı." });
+            // Pass the stable error code; the controller wraps it in an AppError.
+            return done(null, false, { message: "INVALID_CREDENTIALS" });
           }
           return done(null, user);
         } catch (err) {

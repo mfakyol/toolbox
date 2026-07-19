@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../errors/AppError.js";
 import { config } from "../config/index.js";
 
 // Requires an authenticated session — unless auth is disabled globally
@@ -8,7 +8,7 @@ import { config } from "../config/index.js";
 export const requireAuth: RequestHandler = (req, _res, next) => {
   if (!config.authRequired) return next();
   if (!req.isAuthenticated?.() || !req.user) {
-    return next(new AppError("Giriş yapmanız gerekiyor.", 401));
+    return next(new AppError("AUTH_REQUIRED", 401));
   }
   next();
 };
@@ -16,7 +16,7 @@ export const requireAuth: RequestHandler = (req, _res, next) => {
 // Requires the "admin" role. Assumes requireAuth ran first.
 export const requireAdmin: RequestHandler = (req, _res, next) => {
   if (req.user?.role !== "admin") {
-    return next(new AppError("Bu işlem için yetkiniz yok.", 403));
+    return next(new AppError("FORBIDDEN", 403));
   }
   next();
 };
@@ -26,7 +26,7 @@ export const requireAdmin: RequestHandler = (req, _res, next) => {
 // change-password flow before it can use anything.
 export const requirePasswordChanged: RequestHandler = (req, _res, next) => {
   if (req.user?.mustChangePassword) {
-    return next(new AppError("Devam etmeden önce şifrenizi değiştirin.", 403));
+    return next(new AppError("PASSWORD_CHANGE_REQUIRED", 403));
   }
   next();
 };

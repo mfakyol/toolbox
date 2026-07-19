@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { convertFont } from "../services/font.service.js";
 import { FONT_FORMATS, isFontFormat } from "../constants/fontFormats.js";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../errors/AppError.js";
 
 // POST /api/font/convert — single font conversion.
 export async function convertFontHandler(
@@ -11,12 +11,12 @@ export async function convertFontHandler(
 ): Promise<void> {
   try {
     if (!req.file) {
-      throw new AppError("No font file was provided.");
+      throw new AppError("NO_FONT_FILE");
     }
 
     const format = String(req.body.format ?? "woff2").toLowerCase();
     if (!isFontFormat(format)) {
-      throw new AppError(`Unsupported font format: ${format}`);
+      throw new AppError("UNSUPPORTED_FORMAT", 400, `Unsupported font format: ${format}`);
     }
 
     const result = await convertFont(req.file.buffer, format);

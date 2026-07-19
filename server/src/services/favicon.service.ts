@@ -1,7 +1,7 @@
 import sharp from "sharp";
 import JSZip from "jszip";
 import pngToIco from "png-to-ico";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../errors/AppError.js";
 
 // PNG sizes to generate.
 const PNG_SIZES = [16, 32, 48, 64, 128, 180, 192, 256, 512] as const;
@@ -40,7 +40,7 @@ export async function generateFavicons(input: Buffer): Promise<Buffer> {
   try {
     await sharp(input).metadata();
   } catch {
-    throw new AppError("Invalid or unrecognized image file.", 415);
+    throw new AppError("INVALID_IMAGE", 415);
   }
 
   // Produce a square PNG for each size.

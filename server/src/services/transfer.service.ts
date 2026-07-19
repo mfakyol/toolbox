@@ -3,15 +3,16 @@
 import fs from "node:fs/promises";
 import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
+import { isValidObjectId } from "mongoose";
 import { config } from "../config/index.js";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../errors/AppError.js";
 import {
   Transfer,
   TTL_OPTIONS,
   DEFAULT_TTL,
   type TransferDoc,
 } from "../models/Transfer.js";
-import { storedFilePath } from "../middleware/uploadTransfer.js";
+import { storedFilePath } from "../utils/storage.js";
 
 type UploadedFile = Express.Multer.File;
 type TransferRow = TransferDoc & { _id: unknown };
@@ -40,14 +41,14 @@ export async function createTransfer(
   input: CreateTransferInput
 ) {
   if (!files || files.length === 0) {
-    throw new AppError("En az bir dosya yükleyin.", 400);
+    throw new AppError("TRANSFER_NO_FILES", 400);
   }
 
   const totalSize = files.reduce((sum, f) => sum + f.size, 0);
   if (totalSize > config.maxTransferSize) {
     // Over the total cap — clean up what multer already wrote.
     await deleteFilesFromDisk(files.map((f) => ({ storedName: f.filename })));
-    throw new AppError("Toplam boyut sınırı aşıldı.", 413);
+    throw new AppError("TRANSFER_TOO_LARGE", 413);
   }
 
   const ttlSeconds =
@@ -118,21 +119,21 @@ export interface DownloadAuth {
 // Throws on missing / expired / login-required / wrong-passphrase.
 export async function authorizeDownload(token: string, auth: DownloadAuth) {
   const transfer = await Transfer.findOne({ token });
-  if (!transfer) throw new AppError("Transfer bulunamadı.", 404);
+  if (!transfer) throw new AppError("TRANSFER_NOT_FOUND", 404);
 
   await expireIfNeeded(transfer as never);
   if (transfer.status === "expired") {
-    throw new AppError("Bu transferin süresi doldu.", 410);
+    throw new AppError("TRANSFER_EXPIRED", 410);
   }
   if (transfer.requireLogin && !auth.isAuthed) {
-    throw new AppError("Bu dosyaları indirmek için giriş yapmalısınız.", 401);
+    throw new AppError("TRANSFER_LOGIN_REQUIRED", 401);
   }
   if (transfer.hasPassphrase) {
     const ok = await bcrypt.compare(
       auth.passphrase?.trim() || "",
       transfer.passphraseHash ?? ""
     );
-    if (!ok) throw new AppError("Parola hatalı.", 403);
+    if (!ok) throw new AppError("TRANSFER_WRONG_PASSPHRASE", 403);
   }
 
   return transfer;
@@ -143,8 +144,9 @@ export async function incrementDownload(id: unknown) {
 }
 
 export async function deleteTransfer(ownerId: string, id: string) {
+  if (!isValidObjectId(id)) throw new AppError("TRANSFER_NOT_FOUND", 404);
   const transfer = await Transfer.findOne({ _id: id, owner: ownerId });
-  if (!transfer) throw new AppError("Transfer bulunamadı.", 404);
+  if (!transfer) throw new AppError("TRANSFER_NOT_FOUND", 404);
   await deleteFilesFromDisk(transfer.files);
   await transfer.deleteOne();
 }

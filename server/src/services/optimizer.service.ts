@@ -1,6 +1,6 @@
 import sharp from "sharp";
 import { isSupportedFormat } from "../constants/formats.js";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../errors/AppError.js";
 import type { OptimizeOptions, OptimizeResult } from "../types/index.js";
 
 function clampQuality(value: number | undefined): number {
@@ -19,7 +19,7 @@ export async function optimizeImage(
   const { format, width, height, keepMetadata = false } = opts;
 
   if (!isSupportedFormat(format)) {
-    throw new AppError(`Unsupported format: ${format}`);
+    throw new AppError("UNSUPPORTED_FORMAT", 400, `Unsupported format: ${format}`);
   }
 
   const animated = format === "gif" || format === "webp";

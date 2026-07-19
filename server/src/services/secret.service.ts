@@ -1,6 +1,6 @@
 // One-time secret business logic. Decoupled from Express (like the other
 // services) so it can be tested directly.
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../errors/AppError.js";
 import {
   Secret,
   TTL_OPTIONS,
@@ -31,10 +31,10 @@ export interface CreateSecretInput {
 export async function createSecret(ownerId: string, input: CreateSecretInput) {
   const content = input.content ?? "";
   if (!content.trim()) {
-    throw new AppError("İçerik boş olamaz.", 400);
+    throw new AppError("SECRET_CONTENT_EMPTY", 400);
   }
   if (content.length > MAX_CONTENT_LENGTH) {
-    throw new AppError("İçerik çok büyük (maks. 100 KB).", 400);
+    throw new AppError("SECRET_CONTENT_TOO_LARGE", 400);
   }
 
   const ttlSeconds =
@@ -99,18 +99,18 @@ export interface RevealInput {
 // secret), then atomically claims it so concurrent requests can't double-read.
 export async function revealSecret(token: string, input: RevealInput) {
   const secret = await Secret.findOne({ token });
-  if (!secret) throw new AppError("Sır bulunamadı.", 404);
+  if (!secret) throw new AppError("SECRET_NOT_FOUND", 404);
 
   await expireIfNeeded(secret as never);
 
   if (secret.status === "viewed") {
-    throw new AppError("Bu sır zaten görüntülendi.", 410);
+    throw new AppError("SECRET_ALREADY_VIEWED", 410);
   }
   if (secret.status === "expired") {
-    throw new AppError("Bu sırrın süresi doldu.", 410);
+    throw new AppError("SECRET_EXPIRED", 410);
   }
   if (secret.requireLogin && !input.isAuthed) {
-    throw new AppError("Bu sırrı görüntülemek için giriş yapmalısınız.", 401);
+    throw new AppError("SECRET_LOGIN_REQUIRED", 401);
   }
 
   let content: string;
@@ -127,7 +127,7 @@ export async function revealSecret(token: string, input: RevealInput) {
   } catch {
     // Wrong passphrase or tampered payload — do NOT consume the secret.
     throw new AppError(
-      secret.hasPassphrase ? "Parola hatalı." : "Sır çözülemedi.",
+      secret.hasPassphrase ? "SECRET_WRONG_PASSPHRASE" : "SECRET_DECRYPT_FAILED",
       403
     );
   }
@@ -138,7 +138,7 @@ export async function revealSecret(token: string, input: RevealInput) {
     { $set: { status: "viewed", viewedAt: new Date(), ...CLEARED_CONTENT } }
   );
   if (claimed.modifiedCount === 0) {
-    throw new AppError("Bu sır zaten görüntülendi.", 410);
+    throw new AppError("SECRET_ALREADY_VIEWED", 410);
   }
 
   return content;

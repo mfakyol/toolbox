@@ -1,16 +1,19 @@
 import type { RequestHandler } from "express";
 import * as secretService from "../services/secret.service.js";
 import { ownerId } from "../config/index.js";
+import { AppError } from "../errors/AppError.js";
 
 // POST /api/secrets — create a one-time secret (login required unless auth is
 // disabled, in which case it belongs to the shared anonymous owner).
 export const create: RequestHandler = async (req, res, next) => {
   try {
+    // Body shape is validated/coerced by createSecretSchema.
+    const { content, passphrase, ttlSeconds, requireLogin } = req.body;
     const secret = await secretService.createSecret(ownerId(req), {
-      content: req.body?.content,
-      passphrase: req.body?.passphrase,
-      ttlSeconds: Number(req.body?.ttlSeconds) || undefined,
-      requireLogin: Boolean(req.body?.requireLogin),
+      content,
+      passphrase,
+      ttlSeconds,
+      requireLogin,
     });
     res.status(201).json({ secret });
   } catch (err) {
@@ -32,10 +35,7 @@ export const list: RequestHandler = async (req, res, next) => {
 export const meta: RequestHandler = async (req, res, next) => {
   try {
     const info = await secretService.getMeta(req.params.token);
-    if (!info) {
-      res.status(404).json({ error: "Sır bulunamadı." });
-      return;
-    }
+    if (!info) throw new AppError("SECRET_NOT_FOUND", 404);
     res.json({ meta: info });
   } catch (err) {
     next(err);

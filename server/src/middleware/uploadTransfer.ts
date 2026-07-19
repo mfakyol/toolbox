@@ -1,12 +1,8 @@
-import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import multer from "multer";
 import { config } from "../config/index.js";
-
-// Absolute path to the upload directory, created on startup if missing.
-export const UPLOAD_PATH = path.resolve(config.uploadDir);
-fs.mkdirSync(UPLOAD_PATH, { recursive: true });
+import { UPLOAD_PATH } from "../utils/storage.js";
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, UPLOAD_PATH),
@@ -26,7 +22,3 @@ export const uploadTransfer = multer({
     files: config.maxTransferFiles,
   },
 }).array("files", config.maxTransferFiles);
-
-export function storedFilePath(storedName: string): string {
-  return path.join(UPLOAD_PATH, storedName);
-}

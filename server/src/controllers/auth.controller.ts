@@ -1,17 +1,17 @@
 import type { RequestHandler } from "express";
 import passport from "passport";
 import { config } from "../config/index.js";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../errors/AppError.js";
 import { User, verifyPassword } from "../models/User.js";
 
 // POST /api/auth/login — email + password, optional rememberMe.
 export const login: RequestHandler = (req, res, next) => {
   passport.authenticate(
     "local",
-    (err: unknown, user: Express.User | false, info?: { message?: string }) => {
+    (err: unknown, user: Express.User | false, _info?: { message?: string }) => {
       if (err) return next(err);
       if (!user) {
-        return next(new AppError(info?.message ?? "Giriş başarısız.", 401));
+        return next(new AppError("INVALID_CREDENTIALS", 401));
       }
 
       req.logIn(user, (loginErr) => {
@@ -52,17 +52,15 @@ export const me: RequestHandler = (req, res) => {
 // Also clears the "must change password" flag set on admin-created accounts.
 export const changePassword: RequestHandler = async (req, res, next) => {
   try {
-    const { currentPassword, newPassword } = req.body ?? {};
-
-    if (typeof newPassword !== "string" || newPassword.length < 8) {
-      throw new AppError("Yeni şifre en az 8 karakter olmalı.", 400);
-    }
+    // Shape (currentPassword present, newPassword length) is validated by
+    // changePasswordSchema.
+    const { currentPassword, newPassword } = req.body;
 
     const user = await User.findById(req.user!.id);
-    if (!user) throw new AppError("Kullanıcı bulunamadı.", 404);
+    if (!user) throw new AppError("USER_NOT_FOUND", 404);
 
     if (!(await verifyPassword(currentPassword ?? "", user.passwordHash))) {
-      throw new AppError("Mevcut şifre hatalı.", 400);
+      throw new AppError("CURRENT_PASSWORD_INCORRECT", 400);
     }
 
     user.passwordHash = await User.hashPassword(newPassword);

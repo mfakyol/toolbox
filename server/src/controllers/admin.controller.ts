@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express";
-import { AppError } from "../utils/AppError.js";
-import { User, ROLES, type Role } from "../models/User.js";
+import { isValidObjectId } from "mongoose";
+import { AppError } from "../errors/AppError.js";
+import { User } from "../models/User.js";
 
 // GET /api/admin/users — list all accounts.
 export const listUsers: RequestHandler = async (_req, res, next) => {
@@ -16,21 +17,12 @@ export const listUsers: RequestHandler = async (_req, res, next) => {
 // their password on first login (mustChangePassword defaults to true).
 export const createUser: RequestHandler = async (req, res, next) => {
   try {
-    const email = String(req.body?.email ?? "").toLowerCase().trim();
-    const password = String(req.body?.password ?? "");
-    const role = (req.body?.role ?? "user") as Role;
+    // Shape (email format, password length, role enum) is validated by
+    // createUserSchema; here we only enforce uniqueness + persistence.
+    const { email, password, role } = req.body;
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      throw new AppError("Geçerli bir e-posta girin.", 400);
-    }
-    if (password.length < 8) {
-      throw new AppError("Şifre en az 8 karakter olmalı.", 400);
-    }
-    if (!ROLES.includes(role)) {
-      throw new AppError("Geçersiz rol.", 400);
-    }
     if (await User.exists({ email })) {
-      throw new AppError("Bu e-posta zaten kayıtlı.", 409);
+      throw new AppError("EMAIL_TAKEN", 409);
     }
 
     const user = await User.create({
@@ -49,11 +41,14 @@ export const createUser: RequestHandler = async (req, res, next) => {
 // DELETE /api/admin/users/:id — remove an account (admins can't delete themselves).
 export const deleteUser: RequestHandler = async (req, res, next) => {
   try {
+    if (!isValidObjectId(req.params.id)) {
+      throw new AppError("USER_NOT_FOUND", 404);
+    }
     if (req.params.id === req.user!.id) {
-      throw new AppError("Kendi hesabınızı silemezsiniz.", 400);
+      throw new AppError("CANNOT_DELETE_SELF", 400);
     }
     const deleted = await User.findByIdAndDelete(req.params.id);
-    if (!deleted) throw new AppError("Kullanıcı bulunamadı.", 404);
+    if (!deleted) throw new AppError("USER_NOT_FOUND", 404);
     res.json({ ok: true });
   } catch (err) {
     next(err);

@@ -1,23 +1,21 @@
 import type { RequestHandler } from "express";
 import { ZipArchive } from "archiver";
 import * as transferService from "../services/transfer.service.js";
-import { storedFilePath } from "../middleware/uploadTransfer.js";
+import { storedFilePath } from "../utils/storage.js";
 import { ownerId } from "../config/index.js";
+import { AppError } from "../errors/AppError.js";
 
 // POST /api/transfers — multipart upload of one or more files (login required
 // unless auth is disabled, in which case it belongs to the shared anonymous
 // owner).
 export const create: RequestHandler = async (req, res, next) => {
   try {
+    // Body shape is validated/coerced by createTransferSchema.
+    const { message, passphrase, ttlSeconds, requireLogin } = req.body;
     const transfer = await transferService.createTransfer(
       ownerId(req),
       (req.files as Express.Multer.File[]) ?? [],
-      {
-        message: req.body?.message,
-        passphrase: req.body?.passphrase,
-        ttlSeconds: Number(req.body?.ttlSeconds) || undefined,
-        requireLogin: req.body?.requireLogin === "true" || req.body?.requireLogin === true,
-      }
+      { message, passphrase, ttlSeconds, requireLogin }
     );
     res.status(201).json({ transfer });
   } catch (err) {
@@ -39,10 +37,7 @@ export const list: RequestHandler = async (req, res, next) => {
 export const meta: RequestHandler = async (req, res, next) => {
   try {
     const transfer = await transferService.getMeta(req.params.token);
-    if (!transfer) {
-      res.status(404).json({ error: "Transfer bulunamadı." });
-      return;
-    }
+    if (!transfer) throw new AppError("TRANSFER_NOT_FOUND", 404);
     res.json({ transfer });
   } catch (err) {
     next(err);

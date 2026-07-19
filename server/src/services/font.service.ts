@@ -1,6 +1,6 @@
 import { convert, detectFormat } from "fontverter";
 import { FONT_FORMATS, isFontFormat } from "../constants/fontFormats.js";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../errors/AppError.js";
 import type { FontFormat } from "../constants/fontFormats.js";
 
 export interface FontConvertResult {
@@ -19,14 +19,14 @@ export async function convertFont(
   format: FontFormat
 ): Promise<FontConvertResult> {
   if (!isFontFormat(format)) {
-    throw new AppError(`Unsupported font format: ${format}`);
+    throw new AppError("UNSUPPORTED_FORMAT", 400, `Unsupported font format: ${format}`);
   }
 
   let sourceFormat: string;
   try {
     sourceFormat = await detectFormat(input);
   } catch {
-    throw new AppError("Invalid or unrecognized font file.", 415);
+    throw new AppError("INVALID_FONT", 415);
   }
 
   const { target } = FONT_FORMATS[format];
@@ -37,8 +37,9 @@ export async function convertFont(
     return { buffer, size: buffer.length, format, sourceFormat };
   } catch (err) {
     throw new AppError(
-      `Font conversion failed: ${(err as Error).message}`,
-      422
+      "FONT_CONVERSION_FAILED",
+      422,
+      `Font conversion failed: ${(err as Error).message}`
     );
   }
 }

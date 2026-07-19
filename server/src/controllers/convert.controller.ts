@@ -7,7 +7,7 @@ import {
   SUPPORTED_FORMATS,
   isSupportedFormat,
 } from "../constants/formats.js";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../errors/AppError.js";
 import type { OptimizeOptions } from "../types/index.js";
 
 function parseNumber(value: unknown): number | undefined {
@@ -24,12 +24,12 @@ export async function convert(
 ): Promise<void> {
   try {
     if (!req.file) {
-      throw new AppError("No image file was provided.");
+      throw new AppError("NO_IMAGE_FILE");
     }
 
     const format = String(req.body.format ?? "webp").toLowerCase();
     if (!isSupportedFormat(format)) {
-      throw new AppError(`Unsupported format: ${format}`);
+      throw new AppError("UNSUPPORTED_FORMAT", 400, `Unsupported format: ${format}`);
     }
 
     const opts: OptimizeOptions = {

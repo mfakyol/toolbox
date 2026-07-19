@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { generateFavicons } from "../services/favicon.service.js";
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "../errors/AppError.js";
 
 // POST /api/favicon — generates a favicon pack (ZIP) from an image.
 export async function faviconHandler(
@@ -10,7 +10,7 @@ export async function faviconHandler(
 ): Promise<void> {
   try {
     if (!req.file) {
-      throw new AppError("No image file was provided.");
+      throw new AppError("NO_IMAGE_FILE");
     }
 
     const zip = await generateFavicons(req.file.buffer);
