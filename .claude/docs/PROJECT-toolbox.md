@@ -74,17 +74,30 @@ tool routes (convert/font/favicon).
   dev (`change-me-*`) — **set real values in production.**
 
 ## Client shape (specifics)
-- Backend calls live in `client/src/api/*` (one module per resource). The current
-  helpers **throw** the backend message on error (see `api/shared.ts`) rather than
-  returning a discriminated result — the standard in `frontend-structure.md` is the
-  target to move toward.
-- No `stores/`, `services/`, or `schemas/` folders yet; components are flat under
-  `components/` plus design-system primitives in `components/ui/`.
+Conforms to `frontend-structure.md`. Layout: `pages/`, `layouts/` (`MainLayout` +
+route `guards`), `components/ui/` (primitives, incl. `CodeEditor`) and
+`components/<feature>/` (`batch`, `compare`, `playground`, `devtools`), `hooks/`,
+`stores/`, `services/`, `schemas/`, `types/`, `utils/`, `i18n/`, `styles/`.
+- **Path alias:** `@/*` → `src/*` (tsconfig `paths` + vite `resolve.alias`, so
+  Vitest resolves it too). Cross-folder imports use `@/…`; only same-folder `./`
+  imports remain relative.
+- **services/** — one `*.service.ts` per resource. Every call returns a
+  discriminated `Result<T>` (`{ success, data } | { success, error }`) from
+  `services/result.ts`; the shared `services/http.ts` helpers (`requestJson`,
+  `postForm`) never throw. Pages/hooks branch on `result.success`.
+- **stores/** — `auth.store.ts` (zustand): session user + runtime `authRequired`,
+  `init()` runs once in `main.tsx`. Store actions translate a failed `Result` into
+  a throw so the calling form can catch it. i18n stays a Context provider (`i18n/`).
+- **schemas/** — Zod input validation (`auth`/`secret`/`transfer`); messages are
+  i18n keys resolved via `t()` at the call site.
 - Styling is **SCSS Modules** (`*.module.scss`) per component, on top of
-  `styles/` tokens/mixins/base. i18n is EN/DE/TR (`i18n/`), browser-detected with
-  `localStorage` persistence.
+  `styles/` tokens/mixins/base. i18n is EN/DE/TR, browser-detected with
+  `localStorage` persistence; **all** user-facing copy (incl. `aria-label`s and
+  input placeholders) goes through `t()`.
 - CodeMirror (JSON page) and the Playground (ws/socket.io/signalr) are
   **lazy-loaded** to keep them out of the main bundle.
+- QR preview renders the generated SVG via an `<img>` blob URL — never
+  `dangerouslySetInnerHTML`.
 
 ## Testing
 - Server: `node:test` — `optimizer` & `font` services (real Sharp conversions,
@@ -98,12 +111,11 @@ tool routes (convert/font/favicon).
   client-facing copy goes through i18n.
 
 ## Open follow-ups (not yet done)
-- Adopt the shared standards where the code still diverges: `zod` request
+Client conforms to `frontend-structure.md`; the remaining gaps are all server-side
+(see `nodejs-backend-security.md`):
+- Adopt the shared standards where the server still diverges: `zod` request
   validation at the boundary, `helmet` + locked CORS (currently `corsOrigin`
-  defaults to `*`), and rate limiting on auth/expensive endpoints — none are wired
-  yet (see `nodejs-backend-security.md`).
+  defaults to `*`), and rate limiting on auth/expensive endpoints.
 - Move CPU-bound conversions to `worker_threads` with a wall-clock timeout (DoS
   hardening) so a single request can't block the event loop.
-- Migrate `api/*` helpers to the discriminated-result contract from
-  `frontend-structure.md`.
 - Structured logging (pino) instead of `console.*` on the server.
